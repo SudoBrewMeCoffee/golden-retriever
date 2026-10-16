@@ -1,0 +1,7 @@
+# ch-mirror policy gate - real configuration (terraform/ defaults: VM 301, template 9201, static 10.69.1.72)
+# 2026-10-16T17:47Z conftest 0.71.1 (OPA: 1.21.1), terraform v1.16.6
+# terraform plan: No changes. Your infrastructure matches the configuration.
+$ scripts/policy-check.sh
+
+9 tests, 9 passed, 0 warnings, 0 failures, 0 exceptions
+exit code: 0
