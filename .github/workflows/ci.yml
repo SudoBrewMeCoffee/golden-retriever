@@ -3,6 +3,14 @@ name: ch-mirror
 # Same shape as Companies House's *-terraform repos: checks on every PR, a
 # Terraform plan posted for review, and nothing deployed without a human
 # approving the kronos-prod environment.
+# Security model for the self-hosted runner (Magnus, on the lab LAN, holds the Proxmox token):
+# - This repo is public. Pull requests from forks never reach the self-hosted runner: every job
+#   below only runs for pushes, manual runs, or PRs whose branch lives in this repo. Fork PRs get
+#   the GitHub-hosted checks only (hosted-checks.yml).
+# - Credentials stay on the runner host (~/.config/ch-mirror/pve-token, read by terraform/tf.sh
+#   into the environment only). Nothing secret is stored in GitHub.
+# - The saved plan contains input values, so it is never uploaded as an artifact (public repo):
+#   it is kept on the runner host, outside the workspace, and only that exact plan is applied.
 on:
   pull_request:
   push:
@@ -15,10 +23,11 @@ env:
 
 jobs:
   checks:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: [self-hosted, mac-studio]
     steps:
       - uses: actions/checkout@v4
-      - name: pre-commit (fmt, validate, docs, tflint, trivy, ansible-lint)
+      - name: pre-commit (fmt, validate, docs, tflint, trivy, ansible-lint, policy tests)
         run: pre-commit run --all-files --show-diff-on-failure 2>&1 | tee "$RUNNER_TEMP/02-precommit.log"
       - name: Molecule (role logic; SSH/firewall/SELinux proved on a real VM by the Packer gate)
         working-directory: ansible
@@ -32,25 +41,24 @@ jobs:
   plan:
     needs: checks
     runs-on: [self-hosted, mac-studio]
-    env:
-      TF_VAR_proxmox_api_token: ${{ secrets.PROXMOX_API_TOKEN }}
-      TF_VAR_ssh_public_key: ${{ secrets.ADMIN_SSH_PUBKEY }}
     steps:
       - uses: actions/checkout@v4
       - name: terraform plan
-        working-directory: terraform
-        run: |
-          terraform init -input=false
-          terraform plan -input=false -no-color -out=tfplan | tee "$RUNNER_TEMP/05-plan.log"
+        shell: bash
+        run: terraform/tf.sh plan -no-color 2>&1 | tee "$RUNNER_TEMP/05-plan.log"
       - name: policy check (conftest - a deny fails the job before anyone can approve apply)
         shell: bash   # -eo pipefail, so a deny is not hidden by tee
         run: scripts/policy-check.sh terraform 2>&1 | tee "$RUNNER_TEMP/08-policy.log"
+      - name: Keep the reviewed plan on the runner host (never uploaded)
+        shell: bash
+        run: |
+          install -d -m 700 "$HOME/ch-mirror-state/plans"
+          mv terraform/tfplan "$HOME/ch-mirror-state/plans/${{ github.run_id }}.tfplan"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: tfplan
+          name: plan-evidence
           path: |
-            terraform/tfplan
             ${{ runner.temp }}/05-plan.log
             ${{ runner.temp }}/08-policy.log
 
@@ -59,17 +67,17 @@ jobs:
     needs: plan
     runs-on: [self-hosted, mac-studio]
     environment: kronos-prod          # required reviewer = Graham (manual approval gate)
-    env:
-      TF_VAR_proxmox_api_token: ${{ secrets.PROXMOX_API_TOKEN }}
-      TF_VAR_ssh_public_key: ${{ secrets.ADMIN_SSH_PUBKEY }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
-        with:
-          name: tfplan
-          path: terraform
-      - name: terraform apply (the reviewed plan, nothing else)
-        working-directory: terraform
+      - name: terraform apply (the reviewed plan from this run, nothing else)
+        shell: bash
         run: |
-          terraform init -input=false
-          terraform apply -input=false -no-color tfplan | tee "$RUNNER_TEMP/05-apply.log"
+          plan="$HOME/ch-mirror-state/plans/${{ github.run_id }}.tfplan"
+          mv "$plan" terraform/tfplan
+          terraform/tf.sh apply 2>&1 | tee "$RUNNER_TEMP/05-apply.log"
+          rm -f terraform/tfplan
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: apply-evidence
+          path: ${{ runner.temp }}/05-apply.log
