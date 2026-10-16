@@ -133,6 +133,12 @@ jobs:
           python -m pip install 'ansible-core>=2.19,<2.22' 'molecule==26.10.0' 'molecule-plugins[docker]==26.10.12'
           ansible-galaxy role install -r ansible/requirements.yml -p ansible/roles
           ansible-galaxy collection install -r ansible/requirements.yml
+      - name: Temporary Molecule runtime diagnostics
+        working-directory: ansible
+        run: |
+          molecule create
+          docker exec rocky9 sh -c 'id; ls -l /etc/shadow; getent shadow root | cut -d: -f1,3-9; sudo -n true; echo rc=$?; journalctl -b --no-pager | grep -i -E "pam|sudo|unix_chkpwd" | tail -20; cat /proc/1/comm'
+          find "$HOME/.ansible/tmp" -path '*/molecule.*/inventory/*' -type f -print -exec cat {} \;
       - name: Test role in Docker using the scenario Dockerfile
         working-directory: ansible
         run: molecule test
