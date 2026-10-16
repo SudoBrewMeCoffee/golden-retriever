@@ -126,4 +126,3 @@ fatal: [10.69.1.72]: FAILED! => {
 
 PLAY RECAP *********************************************************************
 10.69.1.72                 : ok=18   changed=0    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
-
