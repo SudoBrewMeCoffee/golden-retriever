@@ -133,6 +133,35 @@ jobs:
           python -m pip install 'ansible-core>=2.19,<2.22' 'molecule==26.10.0' 'molecule-plugins[docker]==26.10.12'
           ansible-galaxy role install -r ansible/requirements.yml -p ansible/roles
           ansible-galaxy collection install -r ansible/requirements.yml
+      - name: Allow PAM helper to read mode-000 shadow in the test container
+        run: |
+          # Ubuntu's host profile attaches to unix_chkpwd inside privileged Rocky
+          # containers. Keep it enforced, adding only the DAC read capability denied
+          # in the hosted diagnostics. Restore the original override after testing.
+          profile=/etc/apparmor.d/unix-chkpwd
+          local_profile=/etc/apparmor.d/local/unix-chkpwd
+          if [[ -f "$profile" ]]; then
+            grep -q '<local/unix-chkpwd>' "$profile"
+            sudo mkdir -p /etc/apparmor.d/local
+            if sudo test -e "$local_profile"; then
+              sudo cp -a "$local_profile" "$RUNNER_TEMP/unix-chkpwd.local"
+              echo 'CH_MIRROR_PAM_PROFILE_EXISTED=1' >> "$GITHUB_ENV"
+            fi
+            echo 'CH_MIRROR_PAM_PROFILE_PATCHED=1' >> "$GITHUB_ENV"
+            printf '\n# ch-mirror: read container shadow with mode 000.\ncapability dac_read_search,\n' | sudo tee -a "$local_profile" > /dev/null
+            sudo apparmor_parser -r "$profile"
+          fi
       - name: Test role in Docker using the scenario Dockerfile
         working-directory: ansible
         run: molecule test
+      - name: Restore hosted runner PAM helper profile
+        if: always()
+        run: |
+          if [[ "${CH_MIRROR_PAM_PROFILE_PATCHED:-}" == 1 ]]; then
+            if [[ "${CH_MIRROR_PAM_PROFILE_EXISTED:-}" == 1 ]]; then
+              sudo cp -a "$RUNNER_TEMP/unix-chkpwd.local" /etc/apparmor.d/local/unix-chkpwd
+            else
+              sudo rm -f /etc/apparmor.d/local/unix-chkpwd
+            fi
+            sudo apparmor_parser -r /etc/apparmor.d/unix-chkpwd
+          fi
