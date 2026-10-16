@@ -70,12 +70,17 @@ jobs:
         run: |
           terraform init -input=false
           terraform plan -input=false -no-color -out=tfplan | tee "$RUNNER_TEMP/05-plan.log"
+      - name: policy check (conftest - a deny fails the job before anyone can approve apply)
+        shell: bash   # -eo pipefail, so a deny is not hidden by tee
+        run: scripts/policy-check.sh terraform 2>&1 | tee "$RUNNER_TEMP/08-policy.log"
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: tfplan
           path: |
             terraform/tfplan
             ${{ runner.temp }}/05-plan.log
+            ${{ runner.temp }}/08-policy.log
 
   apply:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
