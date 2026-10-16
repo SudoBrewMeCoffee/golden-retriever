@@ -23,6 +23,10 @@ platforms:
       - /sys/fs/cgroup:/sys/fs/cgroup:rw
 provisioner:
   name: ansible
+  inventory:
+    host_vars:
+      rocky9:
+        ansible_become: false
   env:
     ANSIBLE_ROLES_PATH: ../../roles
   options:
