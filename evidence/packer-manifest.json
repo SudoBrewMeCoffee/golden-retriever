@@ -8,7 +8,16 @@
       "artifact_id": "9201",
       "packer_run_uuid": "91894960-1f6a-626e-d2d6-73889e947a18",
       "custom_data": null
+    },
+    {
+      "name": "rocky9",
+      "builder_type": "proxmox-clone",
+      "build_time": 1792173894,
+      "files": null,
+      "artifact_id": "9202",
+      "packer_run_uuid": "92a0c6e1-0f30-68d6-4dbc-41cafe92b199",
+      "custom_data": null
     }
   ],
-  "last_run_uuid": "91894960-1f6a-626e-d2d6-73889e947a18"
+  "last_run_uuid": "92a0c6e1-0f30-68d6-4dbc-41cafe92b199"
 }
