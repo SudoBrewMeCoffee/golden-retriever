@@ -1,0 +1,49 @@
+
+PLAY [Verify a deployed instance] **********************************************
+
+TASK [Gathering Facts] *********************************************************
+[WARNING]: Host '10.69.1.73' is using the discovered Python interpreter at '/usr/bin/python3.9', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.21/reference_appendices/interpreter_discovery.html for more information.
+ok: [10.69.1.73]
+
+TASK [Read first-boot baseline unit state] *************************************
+ok: [10.69.1.73]
+
+TASK [Read first-boot baseline unit journal] ***********************************
+ok: [10.69.1.73]
+
+TASK [First-boot AIDE baseline ran and succeeded (issue 17)] *******************
+ok: [10.69.1.73] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [Read AIDE database] ******************************************************
+ok: [10.69.1.73]
+
+TASK [Per-instance AIDE database exists (issue 17)] ****************************
+ok: [10.69.1.73] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [Run AIDE integrity check] ************************************************
+ok: [10.69.1.73]
+
+TASK [AIDE check finds no differences (rc 0)] **********************************
+[ERROR]: Task failed: Action failed: aide --check returned 4: ['Start timestamp: 2026-10-16 19:43:33 +0000 (AIDE 0.19.2)', 'AIDE found differences between database and filesystem!!', '', 'Summary:', '  Total number of entries:\t36772', '  Added entries:\t\t0', '  Removed entries:\t\t0', '  Changed entries:\t\t1', '', '---------------------------------------------------', 'Changed entries:', '---------------------------------------------------', '', 'f > ...   ..H.... : /boot/initramfs-5.14.0-687.58.1.el9_8.x86_64kdump.img', '', '---------------------------------------------------', 'Detailed information about changes:', '---------------------------------------------------', '', 'File: /boot/initramfs-5.14.0-687.58.1.el9_8.x86_64kdump.img', ' Size      : 38222848                         | 38227968', ' SHA512    : 12LQ48SZnhBlkIQUGYmP+2gw5mdJGPtE | MOx+nYc9Ay6V18INNq/VKvQknHJqWdEp', '             Je0AnW/jrUVAzagD3r5geuNrRdL8V76m | q6dw4plXjUKDQRI+e61/gH63jf9kRk0R', '             9ga1zQdf9Yba3Qs7xAWUwg==         | rrd/dI5TzhikAlV7ayc9tQ==', ' SHA3-256  : RM31d2tncl9rtpsAuL8qyUKBgKYym+NI | o440rywXsxNkMMm4xVv/zD+wEME2JCkS', '             OVvIfjWLnt8=                     | /OG+MZoe368=', '', '', '---------------------------------------------------', 'The attributes of the (uncompressed) database(s):', '---------------------------------------------------', '', '/var/lib/aide/aide.db.gz', ' SHA256    : KeKobL3LznVkZBuhpaWKbC08i5ESW8ba', '             e19KG4lZRCA=', ' SHA512    : Z50CxjLp25DQvVwZ1V23w8cmi+6lQ2TL', '             Apkon9hrTtqpREH4f+h7wvwV5ALffK4U', '             IMesvNg5Vt0PcaSfaR+eZw==', ' STRIBOG256: ma4GbbOfbHuyG+llXC27uHIuITRlY50k', '             ekXFyLbvXhM=']
+Origin: /Users/graham/ch-mirror-wt/img102/ansible/verify-deployed.yml:54:11
+
+52           failed_when: false
+53
+54         - name: AIDE check finds no differences (rc 0)
+             ^ column 11
+
+fatal: [10.69.1.73]: FAILED! => {
+    "assertion": "aide_check.rc == 0",
+    "changed": false,
+    "evaluated_to": false,
+    "msg": "aide --check returned 4: ['Start timestamp: 2026-10-16 19:43:33 +0000 (AIDE 0.19.2)', 'AIDE found differences between database and filesystem!!', '', 'Summary:', '  Total number of entries:\\t36772', '  Added entries:\\t\\t0', '  Removed entries:\\t\\t0', '  Changed entries:\\t\\t1', '', '---------------------------------------------------', 'Changed entries:', '---------------------------------------------------', '', 'f > ...   ..H.... : /boot/initramfs-5.14.0-687.58.1.el9_8.x86_64kdump.img', '', '---------------------------------------------------', 'Detailed information about changes:', '---------------------------------------------------', '', 'File: /boot/initramfs-5.14.0-687.58.1.el9_8.x86_64kdump.img', ' Size      : 38222848                         | 38227968', ' SHA512    : 12LQ48SZnhBlkIQUGYmP+2gw5mdJGPtE | MOx+nYc9Ay6V18INNq/VKvQknHJqWdEp', '             Je0AnW/jrUVAzagD3r5geuNrRdL8V76m | q6dw4plXjUKDQRI+e61/gH63jf9kRk0R', '             9ga1zQdf9Yba3Qs7xAWUwg==         | rrd/dI5TzhikAlV7ayc9tQ==', ' SHA3-256  : RM31d2tncl9rtpsAuL8qyUKBgKYym+NI | o440rywXsxNkMMm4xVv/zD+wEME2JCkS', '             OVvIfjWLnt8=                     | /OG+MZoe368=', '', '', '---------------------------------------------------', 'The attributes of the (uncompressed) database(s):', '---------------------------------------------------', '', '/var/lib/aide/aide.db.gz', ' SHA256    : KeKobL3LznVkZBuhpaWKbC08i5ESW8ba', '             e19KG4lZRCA=', ' SHA512    : Z50CxjLp25DQvVwZ1V23w8cmi+6lQ2TL', '             Apkon9hrTtqpREH4f+h7wvwV5ALffK4U', '             IMesvNg5Vt0PcaSfaR+eZw==', ' STRIBOG256: ma4GbbOfbHuyG+llXC27uHIuITRlY50k', '             ekXFyLbvXhM=']"
+}
+
+PLAY RECAP *********************************************************************
+10.69.1.73                 : ok=7    changed=0    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   

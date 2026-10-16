@@ -19,9 +19,9 @@ variable "node_name" {
 }
 
 variable "template_id" {
-  description = "Hardened template built by Packer (ch-rocky9-base-<version>). 9201 = 1.0.0, 9202 = 1.0.1."
+  description = "Hardened template built by Packer (ch-rocky9-base-<version>). 9201 = 1.0.0, 9202 = 1.0.1, 9203 = 1.0.2."
   type        = number
-  default     = 9202
+  default     = 9203
 }
 
 variable "vm_id" {

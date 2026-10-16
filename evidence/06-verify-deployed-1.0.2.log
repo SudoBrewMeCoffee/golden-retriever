@@ -1,0 +1,78 @@
+
+PLAY [Verify a deployed instance] **********************************************
+
+TASK [Gathering Facts] *********************************************************
+[WARNING]: Host '10.69.1.73' is using the discovered Python interpreter at '/usr/bin/python3.9', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.21/reference_appendices/interpreter_discovery.html for more information.
+ok: [10.69.1.73]
+
+TASK [Read first-boot baseline unit state] *************************************
+ok: [10.69.1.73]
+
+TASK [Read first-boot baseline unit journal] ***********************************
+ok: [10.69.1.73]
+
+TASK [First-boot AIDE baseline ran and succeeded (issue 17)] *******************
+ok: [10.69.1.73] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [Read AIDE database] ******************************************************
+ok: [10.69.1.73]
+
+TASK [Per-instance AIDE database exists (issue 17)] ****************************
+ok: [10.69.1.73] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [Run AIDE integrity check] ************************************************
+ok: [10.69.1.73]
+
+TASK [AIDE check finds no differences (rc 0)] **********************************
+ok: [10.69.1.73] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [Read scheduled AIDE check unit state] ************************************
+ok: [10.69.1.73]
+
+TASK [Scheduled AIDE check is not failed and its timer is enabled (CIS RHEL9 6.1.2)] ***
+ok: [10.69.1.73] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [Read installed kernel packages] ******************************************
+ok: [10.69.1.73]
+
+TASK [Read running kernel] *****************************************************
+ok: [10.69.1.73]
+
+TASK [Exactly one kernel installed and it is the running one (issue 14)] *******
+ok: [10.69.1.73] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [Read release stamp] ******************************************************
+ok: [10.69.1.73]
+
+TASK [Instance was built from the expected image version] **********************
+ok: [10.69.1.73] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [Show results] ************************************************************
+ok: [10.69.1.73] => {
+    "msg": [
+        "ch-rocky9-base 1.0.2",
+        "Kernel 5.14.0-687.58.1.el9_8.x86_64 (installed: 1)",
+        "aide --check rc 0"
+    ]
+}
+
+PLAY RECAP *********************************************************************
+10.69.1.73                 : ok=16   changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
