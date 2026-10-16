@@ -56,6 +56,17 @@ jobs:
         with:
           version: v0.76.0
           cache: true
+      - name: Install conftest (pinned, checksum-verified) for the policy hook
+        env:
+          CONFTEST_VERSION: 0.71.1
+          CONFTEST_SHA256: c3f6b2a753bd56e377a1e51a95ae3e057f926f2e9139f7d5b5dfbbaf810f7985
+        run: |
+          curl -sSfL -o "$RUNNER_TEMP/conftest.tgz" \
+            "https://github.com/open-policy-agent/conftest/releases/download/v${CONFTEST_VERSION}/conftest_${CONFTEST_VERSION}_Linux_x86_64.tar.gz"
+          echo "${CONFTEST_SHA256}  $RUNNER_TEMP/conftest.tgz" | sha256sum -c -
+          tar -xzf "$RUNNER_TEMP/conftest.tgz" -C "$RUNNER_TEMP" conftest
+          sudo install -m 0755 "$RUNNER_TEMP/conftest" /usr/local/bin/conftest
+          conftest --version
       - name: Install Python tools and Ansible dependencies
         run: |
           python -m pip install 'pre-commit==4.3.0' 'ansible-core>=2.19,<2.22'
