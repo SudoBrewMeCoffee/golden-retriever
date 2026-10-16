@@ -46,6 +46,115 @@
       ansible.builtin.assert:
         that: "'NOPASSWD' in rocky_sudo.stdout"
 
+    # ---- Image 1.0.1 remediation checks (issues #1 #2 #3 #4 #6 #7) ----
+    - name: Gather installed packages
+      ansible.builtin.package_facts:
+
+    - name: NFS and rpcbind removed (CIS RHEL9 2.1.9 / 2.1.12, issue 1)
+      ansible.builtin.assert:
+        that:
+          - "'nfs-utils' not in ansible_facts.packages"
+          - "'rpcbind' not in ansible_facts.packages"
+        fail_msg: "nfs-utils or rpcbind is still installed"
+
+    - name: Read active authselect profile
+      ansible.builtin.command: authselect current
+      register: authselect_current
+      changed_when: false
+
+    - name: Custom authselect profile with faillock, pwhistory and no nullok (CIS RHEL9 5.3.2.x, issue 2)
+      ansible.builtin.assert:
+        that:
+          - "'custom/ch_mirror_cis' in authselect_current.stdout"
+          - "'with-faillock' in authselect_current.stdout"
+          - "'with-pwquality' in authselect_current.stdout"
+          - "'with-pwhistory' in authselect_current.stdout"
+          - "'without-nullok' in authselect_current.stdout"
+        fail_msg: "authselect profile/features not in effect: {{ authselect_current.stdout }}"
+
+    - name: Read PAM stacks
+      ansible.builtin.slurp:
+        src: "/etc/pam.d/{{ item }}"
+      loop:
+        - system-auth
+        - password-auth
+      register: pam_stacks
+
+    - name: PAM stacks enforce faillock and password history, no nullok (issue 2)
+      ansible.builtin.assert:
+        that:
+          - "'pam_faillock.so' in (item.content | b64decode)"
+          - "'pam_pwhistory.so' in (item.content | b64decode)"
+          - "'nullok' not in (item.content | b64decode)"
+        fail_msg: "{{ item.source }} is missing faillock/pwhistory or still allows nullok"
+      loop: "{{ pam_stacks.results }}"
+      loop_control:
+        label: "{{ item.source }}"
+
+    - name: Read password history setting
+      ansible.builtin.command: grep -E '^\s*remember\s*=' /etc/security/pwhistory.conf
+      register: pwhistory_conf
+      changed_when: false
+
+    - name: Password history remembers at least 5 (CIS RHEL9 5.3.3.3.1, issue 2)
+      ansible.builtin.assert:
+        that: (pwhistory_conf.stdout | regex_search('[0-9]+') | int) >= 5
+
+    - name: Read AIDE timer state
+      ansible.builtin.systemd:
+        name: aidecheck.timer
+      register: aide_timer
+
+    - name: AIDE check scheduled by an enabled, active systemd timer (CIS RHEL9 6.1.2, issue 3)
+      ansible.builtin.assert:
+        that:
+          - aide_timer.status.UnitFileState == 'enabled'
+          - aide_timer.status.ActiveState == 'active'
+          - ansible_facts.services['aidecheck.service'].status == 'enabled'
+        fail_msg: "aidecheck.timer/service not enabled and active"
+
+    - name: Read AIDE rules for audit tools
+      ansible.builtin.command: >-
+        grep -cE '^/usr/sbin/(auditctl|auditd|augenrules|aureport|ausearch|autrace) p\+i\+n\+u\+g\+s\+b\+acl\+xattrs\+sha512$'
+        /etc/aide.conf
+      register: aide_audit_tools
+      changed_when: false
+      failed_when: false
+
+    - name: AIDE protects all six audit tools with sha512 (CIS RHEL9 6.1.3, issue 7)
+      ansible.builtin.assert:
+        that: aide_audit_tools.stdout | int == 6
+        fail_msg: "Expected 6 audit-tool rules in /etc/aide.conf, found {{ aide_audit_tools.stdout }}"
+
+    - name: Read password ageing defaults
+      ansible.builtin.command: grep -E '^PASS_(MIN_DAYS|WARN_AGE)' /etc/login.defs
+      register: login_defs
+      changed_when: false
+
+    - name: Read useradd defaults
+      ansible.builtin.command: useradd -D
+      register: useradd_defaults
+      changed_when: false
+
+    - name: Ageing defaults for new accounts (CIS RHEL9 5.4.1.2, 5.4.1.3, 5.4.1.5 - issues 4 and 6)
+      ansible.builtin.assert:
+        that:
+          - "'PASS_MIN_DAYS 7' in login_defs.stdout_lines"
+          - "'PASS_WARN_AGE 7' in login_defs.stdout_lines"
+          - "'INACTIVE=30' in useradd_defaults.stdout_lines"
+
+    # Prints user names only, never password fields.
+    - name: Find accounts with a usable password and weak ageing
+      ansible.builtin.command: >-
+        awk -F: '$2 !~ /^[!*]/ && ($4 < 7 || $6 < 7 || $7 == "" || $7 > 30) {print $1}' /etc/shadow
+      register: weak_ageing
+      changed_when: false
+
+    - name: Existing password accounts have min 7, warn 7, inactive 30 or less (issues 4 and 6)
+      ansible.builtin.assert:
+        that: weak_ageing.stdout_lines | length == 0
+        fail_msg: "Accounts with weak password ageing: {{ weak_ageing.stdout_lines }}"
+
     - name: Release stamp present
       ansible.builtin.command: cat /etc/ch-mirror-release
       register: rel
