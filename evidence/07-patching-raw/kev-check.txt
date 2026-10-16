@@ -1,0 +1,6 @@
+CISA KEV catalogue version 2026.10.16 released 2026-10-16T17:15:48.8752Z (1748 entries)
+Wazuh 302 (upstream): 542 CVEs, KEV-listed: ['CVE-2025-39964']
+Wazuh 301 (1.0.0): 336 CVEs, KEV-listed: ['CVE-2025-39964']
+dnf updateinfo 302 pending CVEs: 559 CVEs, KEV-listed: ['CVE-2025-39964']
+CVE-2025-39964 | Linux Kernel | Linux Kernel Race Condition Vulnerability | added 2026-09-18 | due 2026-09-21 | ransomware Unknown
+Top-5 (302, fixed on 301) KEV-listed: []

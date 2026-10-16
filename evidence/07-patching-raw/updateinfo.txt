@@ -1,0 +1,16 @@
+# dnf updateinfo (read-only; nothing installed) - 2026-10-16 ~17:47 UTC
+# Commands: sudo dnf makecache; dnf updateinfo summary --available; dnf updateinfo list --security --available | wc -l
+
+== VM 302 ch-patch-baseline 10.69.1.73 (upstream Rocky 9.8 GenericCloud, template 9200, unpatched)
+Updates Information Summary: available
+    100 Security notice(s)
+          1 Critical Security notice(s)
+         60 Important Security notice(s)
+         34 Moderate Security notice(s)
+          5 Low Security notice(s)
+      3 Bugfix notice(s)
+security advisory/package lines pending: 318
+
+== VM 301 ch-app-01 10.69.1.72 (ch-rocky9-base-1.0.0, updated at build 2026-10-16)
+(summary printed nothing: no advisories available)
+security advisory/package lines pending: 0
