@@ -53,10 +53,11 @@ fix and the control added so it can't recur.
 | Base templates 9200 `rocky9-cloud-base`, 9210 `al2023-kvm-base` | Stock cloud images, checksum-verified; never deployed directly (policy denies it) | `/root/ch-mirror-logs/` on pve, `policy/terraform/` |
 | Rocky image 1.0.0 (template 9201) | CIS RHEL 9 L1 (414 tasks, 0 failed) + real-VM verify gate 11/11 | `evidence/03-packer-build-1.0.0.log` |
 | Rocky image 1.0.1 (template 9202) | Remediation of 8 scanner findings; verify gate 28/28 | PR #15 |
+| Rocky image 1.0.2 (template 9203) | One kernel installed (#14); per-instance AIDE baseline built on first boot (#17); verify gate 32/32; throwaway VM: post-deploy verify 16/16 with `aide --check` rc 0, Wazuh 76% (127 pass / 38 fail), CIS 1.3.2 pass | `evidence/03-packer-build-1.0.2.log`, `06-verify-deployed-1.0.2.log`, `11-sca-1.0.2-summary.json` |
 | AL2023 image 1.0.0 (template 9211) | AMAZON2023-CIS 1.5.0 + verify gate 11/11; Wazuh CIS Amazon Linux 2023: 65% (117 pass / 63 fail) | `packer/al2023/`, `evidence/03-packer-build-al2023-1.0.0.log`, `09-sca-al2023-summary.json` |
 | VM 301 `ch-app-01` (10.69.1.72) | Replaced via reviewed plan with 1.0.1 | `evidence/10-deploy-1.0.1.md` (PR #15) |
 | CIS score (Wazuh, CIS Rocky 9 v1.0.0) | **53% upstream -> 73% (1.0.0) -> 76% (1.0.1)**, 0 regressions | `evidence/finding.md`, `06-sca-after-analysis.md`, `10-deploy-1.0.1.md` |
-| Patching | Upstream image: 100 security advisories, 542 CVEs -> patched image: 0 advisories; old-kernel finding tracked in #14 | `evidence/07-patching.md` |
+| Patching | Upstream image: 100 security advisories, 542 CVEs -> patched image: 0 advisories; old-kernel finding fixed in image 1.0.2 (#14) | `evidence/07-patching.md` |
 | Policy as code | conftest/OPA on every plan: ID range, hardened template (raw bases denied), static IP, replacement warning; 23 unit tests | `policy/terraform/` |
 | Hosted checks (GitHub-hosted) | pre-commit, Terraform/Packer validate, Molecule on every push and PR | `.github/workflows/hosted-checks.yml` |
 | Deploy pipeline (self-hosted) | Plan -> policy -> human approval (`kronos-prod`) -> apply saved plan; runner being registered | `.github/workflows/ci.yml` |
