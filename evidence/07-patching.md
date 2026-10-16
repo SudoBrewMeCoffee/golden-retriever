@@ -50,9 +50,9 @@ the patched kernel, 687.58.1. `dnf update` installs a new kernel next to the old
 cannot remove the kernel that is running during the build. Wazuh scans installed packages, so it
 reports the old kernel's 336 CVEs. These are not running code, but they are still a real hygiene
 problem. The old kernel is still a boot entry, and the scanner noise hides real findings.
-**Fix for 1.0.1:** reboot the build VM into the new kernel, then run `dnf -y remove --oldinstallonly`
-before the verify gate. Add a gate check that `rpm -q kernel` returns exactly one kernel. This is
-not yet built or tested.
+**Fix (tracked as #14, deferred from 1.0.1 to image 1.0.2):** reboot the build VM into the new kernel,
+then run `dnf -y remove --oldinstallonly` before the verify gate. Add a gate check that `rpm -q kernel`
+returns exactly one kernel. Image 1.0.1 shipped without this fix; see the 1.0.2 PR for the test evidence.
 
 ### dnf security advisories (read-only `dnf updateinfo`; no packages installed)
 
@@ -64,7 +64,8 @@ not yet built or tested.
 | Moderate | 34 | 0 |
 | Low | 5 | 0 |
 | Unique CVEs in those advisories | 559 | 0 |
-| Package updates pending | 318 | 0 |
+| Advisory/package rows pending (one package can appear under several advisories) | 318 | 0 |
+| Unique packages with a pending security update | 91 | 0 |
 
 The two tools agree: 301 has nothing outstanding. dnf compares against the newest installed kernel,
 so the leftover kernel does not show up here. Wazuh does show it, which is why both views are worth

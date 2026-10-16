@@ -63,6 +63,15 @@ jobs:
               curl -sk -H @- "https://10.69.1.139:8006/api2/json/cluster/resources?type=vm" |
               python3 -c 'import json,sys; used={v["vmid"] for v in json.load(sys.stdin)["data"]}; print(next(i for i in range(9202,9300) if i not in used))')
           fi
+          # Never reuse a version: refuse one that is already tagged or already exists as a template.
+          # (1.0.0 and 1.0.1 were built before tagging started, so tags alone are not enough.)
+          NAMES=$(printf 'Authorization: PVEAPIToken=%s=%s\n' "$PKR_VAR_proxmox_username" "$PKR_VAR_proxmox_token" |
+            curl -sk -H @- "https://10.69.1.139:8006/api2/json/cluster/resources?type=vm" |
+            python3 -c 'import json,sys; print("\n".join(v.get("name","") for v in json.load(sys.stdin)["data"]))')
+          if git rev-parse -q --verify "refs/tags/image-$VER" >/dev/null || grep -qx "ch-rocky9-base-$VER" <<<"$NAMES"; then
+            echo "::error::Image version $VER already exists (tag or template). Pass a new image_version."
+            exit 1
+          fi
           echo "Building ch-rocky9-base-$VER as template $TID"
           echo "version=$VER" >> "$GITHUB_OUTPUT"
           echo "template_id=$TID" >> "$GITHUB_OUTPUT"
