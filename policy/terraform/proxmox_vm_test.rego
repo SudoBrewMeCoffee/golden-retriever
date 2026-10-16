@@ -129,3 +129,11 @@ test_destroy_warns if {
 test_destroy_not_checked_as_vm if {
 	count(deny) == 0 with input as plan_with(null, ["delete"])
 }
+
+test_raw_base_template_denied if {
+	denied_with(object.union(good_vm, {"clone": [{"vm_id": 9200}]}), "raw, un-hardened base image")
+}
+
+test_raw_al2023_base_template_denied if {
+	denied_with(object.union(good_vm, {"clone": [{"vm_id": 9210}]}), "raw, un-hardened base image")
+}

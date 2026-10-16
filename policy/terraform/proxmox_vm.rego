@@ -85,6 +85,17 @@ deny contains msg if {
 	msg := sprintf("%s: clones template %v - only hardened ch-mirror templates 9200-9299 are allowed", [rc.address, id])
 }
 
+# 9200 and 9210 are the stock, un-hardened cloud images that Packer starts from.
+# They sit inside the range but must never be deployed directly.
+raw_base_templates := {9200, 9210}
+
+deny contains msg if {
+	some rc in vms
+	id := clone_template(rc.change.after)
+	id in raw_base_templates
+	msg := sprintf("%s: clones template %v - that is a raw, un-hardened base image; clone a hardened ch-mirror image", [rc.address, id])
+}
+
 clone_template(after) := id if {
 	some c in after.clone
 	id := c.vm_id
