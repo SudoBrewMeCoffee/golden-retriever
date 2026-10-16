@@ -35,8 +35,10 @@ Two things I would add that the lab already does and that I could not see in the
 
 - **A verify gate inside the build.** ch-mirror's `verify-vm.yml` fails the Packer build if `sshd -T`,
   SELinux, auditd, firewalld or admin access are wrong. Molecule cannot prove these, because the CIS role
-  switches off 78 controls inside containers (`evidence/what-broke.md` #12). The same playbook runs
-  unchanged against an EC2 build instance.
+  switches off 78 controls inside containers (`evidence/what-broke.md` #12). The same approach carries
+  to an EC2 build instance, but not the playbook as-is: it assumes the lab's `rocky` admin account, and
+  AWS RHEL/Amazon Linux images use `ec2-user`. The admin account has to be a parameter (the AL2023 image
+  work adds an `admin_user` variable), and distribution-specific checks need to be scoped per image.
 - **IMDSv2 required on the AMI.** The `amazon-ebs` builder has `imds_support = "v2.0"` to mark the AMI
   as IMDSv2-only, and `metadata_options { http_tokens = "required" }` for the build instance itself. Both
   default to the legacy/optional behaviour, so they have to be set deliberately.
@@ -134,8 +136,9 @@ gaps become work. Accepted deviations live in a register like `evidence/deviatio
 
 ## 4. Vulnerability management
 
-**The lab does:** Wazuh vulnerability detection watches 301's packages; there is no CISA KEV
-cross-check yet (an acknowledged gap in `kronos/onboarding.md`).
+**The lab does:** Wazuh vulnerability detection watches 301's packages; there is no **automated** CISA
+KEV cross-check yet (an acknowledged gap in `kronos/onboarding.md`) - the patching evidence does a
+manual KEV check.
 
 **On AWS I would use Amazon Inspector (v2):**
 
@@ -249,7 +252,7 @@ repo. Policy-as-code checks are in `policy/`.
 | Template `ch-rocky9-base-<semver>` | AMI `<prefix>-<version>` with build tags, shared via `ami_users` | Traceable, immutable image versions |
 | ZFS storage | KMS-encrypted EBS (customer-managed key) plus EBS encryption by default | Encryption with a key you control, enforced at account level |
 | Clearing `authorized_keys` and machine-id in Packer | `ssh_clear_authorized_keys` plus explicit key/history deletion | No build credentials in the image |
-| `ansible/verify-vm.yml` gate in the Packer build | Same playbook against the EC2 build instance | Prove controls on a real instance before publishing |
+| `ansible/verify-vm.yml` gate in the Packer build | Same playbook against the EC2 build instance, with the admin user parameterised (`ec2-user`) | Prove controls on a real instance before publishing |
 | Molecule (Docker) | Molecule in CI (unchanged) | Role logic tests; not a substitute for the real-VM gate |
 | Wazuh SCA (CIS Rocky 9 v1.0.0) | Amazon Inspector CIS scans (CIS RHEL/Rocky 9 2.0.0, AL2023 1.0.0) | OS-level CIS at fleet scale, tag-targeted, multi-account |
 | (none) | Security Hub CSPM CIS AWS Foundations Benchmark | Account and service configuration - not the OS |
