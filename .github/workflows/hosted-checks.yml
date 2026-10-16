@@ -54,7 +54,7 @@ jobs:
           tflint_version: v0.59.1
       - uses: aquasecurity/setup-trivy@3fb12ec12f41e471780db15c232d5dd185dcb514 # v0.2.6
         with:
-          version: v0.67.2
+          version: v0.76.0
           cache: true
       - name: Install Python tools and Ansible dependencies
         run: |
@@ -84,7 +84,7 @@ jobs:
         working-directory: terraform
         run: |
           terraform fmt -check
-          terraform init -backend=false -input=false -lockfile=readonly
+          terraform init -backend=false -input=false
           terraform validate -no-color
       - uses: hashicorp/setup-packer@1aa358be5cf73883762b302a3a03abd66e75b232 # v3.1.0
         with:
@@ -115,7 +115,7 @@ jobs:
           cache-dependency-path: ansible/requirements.yml
       - name: Install Molecule and Ansible dependencies
         run: |
-          python -m pip install 'ansible-core>=2.19,<2.22' 'molecule>=25,<27' 'molecule-plugins[docker]>=23.7,<26'
+          python -m pip install 'ansible-core>=2.19,<2.22' 'molecule==26.10.0' 'molecule-plugins[docker]==26.10.12'
           ansible-galaxy role install -r ansible/requirements.yml -p ansible/roles
           ansible-galaxy collection install -r ansible/requirements.yml
       - name: Test role in Docker using the scenario Dockerfile
