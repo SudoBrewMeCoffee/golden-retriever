@@ -1,0 +1,97 @@
+name: image-rebuild
+
+# Patching = rebuild the image, don't log into servers.
+# A new ch-rocky9-base-<semver> template is built from the upstream base with every
+# update applied (dnf update in packer/rocky9.pkr.hcl), CIS-hardened, and only published
+# if the real-VM verify gate passes. Instances are then replaced by bumping
+# terraform template_id in a PR (plan -> approved apply in ci.yml).
+# See evidence/07-patching.md for the numbers and the cadence.
+on:
+  schedule:
+    - cron: "17 5 1 * *"   # monthly, 05:17 UTC on the 1st
+  workflow_dispatch:         # out-of-band: e.g. a CISA KEV entry hits a package in the image
+    inputs:
+      image_version:
+        description: "Semver for the new image, e.g. 1.0.1 (empty = bump patch of the last image-* tag)"
+        required: false
+      template_id:
+        description: "Proxmox template ID (empty = next free ID in 9202-9299)"
+        required: false
+
+concurrency:
+  group: image-rebuild       # one build at a time: the build VM uses a fixed IP
+  cancel-in-progress: false
+
+permissions:
+  contents: write            # push the image-<version> tag after a successful build
+
+env:
+  # Docker Desktop's credential helper and the Python 3.13 tool venvs (what-broke #5, #6)
+  PATH: /Applications/Docker.app/Contents/Resources/bin:/Users/graham/.local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin
+
+jobs:
+  build:
+    runs-on: [self-hosted, mac-studio]
+    environment: kronos-prod   # a new image needs Graham's approval, scheduled or not
+    env:
+      PKR_VAR_proxmox_username: ${{ secrets.PROXMOX_TOKEN_ID }}
+      PKR_VAR_proxmox_token: ${{ secrets.PROXMOX_TOKEN_SECRET }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0       # need tags to work out the next version
+
+      - name: Work out version and template ID
+        id: v
+        env:
+          IN_VERSION: ${{ inputs.image_version }}
+          IN_TID: ${{ inputs.template_id }}
+        run: |
+          if [ -n "$IN_VERSION" ]; then
+            VER="$IN_VERSION"
+          else
+            LAST=$(git tag -l 'image-*' --sort=-v:refname | head -1 | sed 's/^image-//')
+            LAST=${LAST:-1.0.0}                       # 1.0.0 was built before tagging started
+            VER="${LAST%.*}.$(( ${LAST##*.} + 1 ))"   # patch bump = package updates only
+          fi
+          if [ -n "$IN_TID" ]; then
+            TID="$IN_TID"
+          else
+            # Every version gets its own template, so the old one stays for rollback.
+            # Header goes in on stdin (printf is a shell builtin) so the token never appears in argv.
+            TID=$(printf 'Authorization: PVEAPIToken=%s=%s\n' "$PKR_VAR_proxmox_username" "$PKR_VAR_proxmox_token" |
+              curl -sk -H @- "https://10.69.1.139:8006/api2/json/cluster/resources?type=vm" |
+              python3 -c 'import json,sys; used={v["vmid"] for v in json.load(sys.stdin)["data"]}; print(next(i for i in range(9202,9300) if i not in used))')
+          fi
+          # Never reuse a version: refuse one that is already tagged or already exists as a template.
+          # (1.0.0 and 1.0.1 were built before tagging started, so tags alone are not enough.)
+          NAMES=$(printf 'Authorization: PVEAPIToken=%s=%s\n' "$PKR_VAR_proxmox_username" "$PKR_VAR_proxmox_token" |
+            curl -sk -H @- "https://10.69.1.139:8006/api2/json/cluster/resources?type=vm" |
+            python3 -c 'import json,sys; print("\n".join(v.get("name","") for v in json.load(sys.stdin)["data"]))')
+          if git rev-parse -q --verify "refs/tags/image-$VER" >/dev/null || grep -qx "ch-rocky9-base-$VER" <<<"$NAMES"; then
+            echo "::error::Image version $VER already exists (tag or template). Pass a new image_version."
+            exit 1
+          fi
+          echo "Building ch-rocky9-base-$VER as template $TID"
+          echo "version=$VER" >> "$GITHUB_OUTPUT"
+          echo "template_id=$TID" >> "$GITHUB_OUTPUT"
+
+      - name: Install pinned role + collections
+        working-directory: ansible
+        run: ansible-galaxy install -r requirements.yml -p roles && ansible-galaxy collection install -r requirements.yml
+
+      - name: Packer build (all updates + CIS hardening + real-VM verify gate)
+        run: |
+          (cd packer && packer init .)
+          packer/build.sh "${{ steps.v.outputs.version }}" "${{ steps.v.outputs.template_id }}"
+
+      - name: Tag the image version
+        run: |
+          git tag "image-${{ steps.v.outputs.version }}"
+          git push origin "image-${{ steps.v.outputs.version }}"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: image-${{ steps.v.outputs.version }}-build-log
+          path: evidence/03-packer-build-*.log

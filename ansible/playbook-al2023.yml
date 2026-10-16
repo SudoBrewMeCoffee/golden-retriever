@@ -1,0 +1,35 @@
+---
+# Amazon Linux 2023 counterpart of playbook.yml (CH also build amzn2023 AMIs).
+# Level 1 is selected by tag: run with `--tags level1-server,rule_3.4.1.2,rule_3.4.2.1`
+# exactly as packer/al2023/al2023.pkr.hcl does (see vars/al2023-cis.yml).
+- name: CH-style base image - CIS Amazon Linux 2023 Level 1 + Wazuh-ready
+  hosts: all
+  become: true
+  vars:
+    build_version: "dev"
+  vars_files:
+    - vars/al2023-cis.yml
+  roles:
+    - role: AMAZON2023-CIS
+  post_tasks:
+    - name: Stamp image version (traceability for auditors)
+      tags: always
+      ansible.builtin.copy:
+        dest: /etc/ch-mirror-release
+        content: "al2023-cis-base {{ build_version }}\n"
+        mode: "0644"
+
+    # auditd install/config is Level 2 in CIS AL2023, so a level1-server run skips it;
+    # we still want an audit trail on every image.
+    - name: Ensure audit package present
+      tags: always
+      ansible.builtin.dnf:
+        name: audit
+        state: present
+
+    - name: Ensure auditd enabled and running
+      tags: always
+      ansible.builtin.service:
+        name: auditd
+        enabled: true
+        state: started

@@ -4,16 +4,44 @@
 pattern (Packer + Ansible CIS images, Molecule, Terraform, pre-commit gates) running on my
 KRONOS homelab (Proxmox), kept as a managed KRONOS service.
 
+**Scope, honestly:** lab work on Rocky Linux 9, the binary-compatible rebuild of RHEL 9, on a Proxmox
+homelab - not production RHEL administration or AWS. [`docs/aws-at-scale.md`](docs/aws-at-scale.md)
+describes how the same pattern maps to AWS.
+
+## For reviewers - a 5-minute tour
+
+**1. Security remediation - finding -> ticket -> fix in code -> rebuilt image -> re-scan.**
+Start at [`evidence/finding.md`](evidence/finding.md) (CIS 5.2.4 *SSH access limited*, FAIL on the stock image).
+Remediation tickets are tracked as [GitHub issues labelled `remediation`](../../issues?q=label%3Aremediation).
+The fix is a variable in [`ansible/group_vars/all/cis.yml`](ansible/group_vars/all/cis.yml), baked into a new image
+([`evidence/03-packer-build-1.0.0.log`](evidence/03-packer-build-1.0.0.log)) and proved by re-scan:
+[`evidence/06-sca-after-analysis.md`](evidence/06-sca-after-analysis.md) (53% -> 73%, every remaining failure classified).
+
+**2. Security at scale.** [`docs/aws-at-scale.md`](docs/aws-at-scale.md) - how the lab pattern maps to AWS:
+Packer `amazon-ebs` AMIs, Inspector (vulnerabilities and OS-level CIS scans), Security Hub -> EventBridge -> tickets,
+instance refresh vs Patch Manager. Every AWS/Terraform claim is sourced to primary documentation.
+
+**3. CIS hardening and patching.** Guardrails and their reasons: [`ansible/group_vars/all/cis.yml`](ansible/group_vars/all/cis.yml).
+Real-VM verify gate that fails the build if controls aren't in effect: [`ansible/verify-vm.yml`](ansible/verify-vm.yml).
+Owned, justified deviations: [`evidence/deviations.md`](evidence/deviations.md). Patching: [`evidence/07-patching.md`](evidence/07-patching.md).
+
+**4. Terraform with security built in.** Gates: [`.pre-commit-config.yaml`](.pre-commit-config.yaml) (fmt, validate, docs,
+tflint, Trivy - tfsec's successor). Code: [`terraform/`](terraform/). Pipeline that applies only the reviewed plan behind
+an approval: [`.github/workflows/ci.yml`](.github/workflows/ci.yml). Policy as code: [`policy/`](policy/).
+
+**What went wrong:** [`evidence/what-broke.md`](evidence/what-broke.md) - 15 real incidents, each with root cause,
+fix and the control added so it can't recur.
+
 **Mirrors what CH publish on github.com/companieshouse:**
 
 | CH (AWS) | ch-mirror (Proxmox) |
 |---|---|
 | `rhel9-base-ami`, `amzn2023-base-ami` — Packer + Ansible | `packer/rocky9.pkr.hcl` — Packer + Ansible, RHEL 9 rebuild |
 | Source AMI filter → provision → versioned AMI | Base template 9200 → clone → CIS → versioned template `ch-rocky9-base-<semver>` |
-| KMS-encrypted EBS, `ssh_clear_authorized_keys` | Encrypted storage if available, authorized_keys cleared post-build |
+| KMS-encrypted EBS, `ssh_clear_authorized_keys` | authorized_keys, machine-id and cloud-init state cleared post-build (no storage-encryption claim in the lab - see `docs/aws-at-scale.md`) |
 | `ansible-collection-*` tested with **Molecule** | `ansible/molecule/default` (Docker driver on the Mac Studio) |
 | `*-terraform` repos, pre-commit: fmt, docs, tfsec, tflint | `terraform/` + `.pre-commit-config.yaml` (tfsec → Trivy) |
-| CI Packer container, Terraform runner | GitHub Actions, self-hosted runner in Docker on Mac Studio |
+| CI Packer container, Terraform runner | GitHub Actions workflow targeting a self-hosted runner on the Mac Studio (runner pending) |
 
 **Not in scope:** Kubernetes. CH run EC2/AMI, not K8s. Park the K8s cluster if it's using RAM.
 
@@ -28,7 +56,7 @@ KRONOS homelab (Proxmox), kept as a managed KRONOS service.
 | Molecule | Green (converge, idempotence, verify) | `evidence/04-molecule.log` |
 | pre-commit | 9/9 gates pass (ansible-lint production profile) | `evidence/02-precommit.log` |
 | What broke | 15 real incidents, each with root cause + control | `evidence/what-broke.md` |
-| GitHub PR pipeline | Workflow written; needs repo + runner + secrets (Graham) | `.github/workflows/ci.yml` |
+| GitHub PR pipeline | Workflow written; self-hosted runner (and its secrets) pending - gates so far run locally with the same commands | `.github/workflows/ci.yml` |
 
 Toolchain lives on **Magnus** (Mac Studio). Build: `packer/build.sh <semver>`. Deploy: `terraform/tf.sh plan` then `tf.sh apply` (applies only the saved, reviewed plan). Run both in a held-open session (what-broke #13).
 
@@ -39,7 +67,7 @@ Toolchain lives on **Magnus** (Mac Studio). Build: `packer/build.sh <semver>`. D
 - Snapshot/backup: `vzdump 9000 9101 --storage unas-backups --mode snapshot`
 - Check RAM headroom before building (the OOM lesson): total allocated vs physical.
 - **Additive only.** New IDs 9200–9299 and 300–309. No existing guest is touched.
-- Terraform state stays in `terraform/` backed up with KRONOS backups. Never `terraform destroy` outside this repo's resources.
+- Terraform state is a local backend outside the repo (`~/ch-mirror-state/` on Magnus, see `terraform/versions.tf`), backed up with KRONOS backups. Never `terraform destroy` outside this repo's resources.
 
 ## 1. One-time: base template 9200 (Rocky Linux 9 GenericCloud)
 
@@ -74,7 +102,7 @@ export PM_API_TOKEN_ID="$PROXMOX_USERNAME" PM_API_TOKEN_SECRET="$PROXMOX_TOKEN"
 ```bash
 qm clone 9200 300 --name ch-before --full  &&  qm start 300
 ```
-- Enrol in Wazuh (CT 130) and run SCA with the **CIS Red Hat Enterprise Linux 9** policy.
+- Enrol in Wazuh (CT 130) and run SCA. Wazuh auto-selects **CIS Rocky Linux 9 v1.0.0** (same control content as RHEL 9; see `evidence/finding.md`).
 - Pick **one** failing control (good candidates: SSH `PermitRootLogin`, `auditd` not installed/enabled,
   `/tmp` not a separate mount with `nosuid,noexec`, password complexity in `pwquality.conf`).
 - Save the SCA report to `evidence/01-sca-before.*`. Record the control ID in `evidence/finding.md`.
@@ -88,6 +116,25 @@ packer/build.sh 1.0.0      # reads the token from ~/.config/ch-mirror/pve-token;
 ```
 Produces template **9201 `ch-rocky9-base-1.0.0`**. Bump `version` on every rebuild (CH style).
 
+### Amazon Linux 2023 (CH also build `amzn2023-base-ami`)
+
+Same pattern, second image. Source is AWS's official AL2023 KVM image
+(`cdn.amazonlinux.com/al2023/os-images/latest/kvm/`, SHA256 checked against the published `SHA256SUMS`),
+imported as base template **9210 `al2023-kvm-base`** exactly like 9200 but with `--ciuser ec2-user`
+(the image's default user; the Proxmox cloud-init drive is the NoCloud seed AWS document) and a static `ipconfig0`.
+
+```bash
+packer/al2023/build.sh 1.0.0   # log -> evidence/03-packer-build-al2023-1.0.0.log
+```
+Produces **9211 `al2023-cis-base-1.0.0`**: ansible-lockdown AMAZON2023-CIS 1.5.0 (CIS AL2023 v1.0.0) via
+`ansible/playbook-al2023.yml` + `ansible/vars/al2023-cis.yml`, then the same `verify-vm.yml` gate as `ec2-user`.
+Level 1 is selected with `--tags level1-server` - that role ignores its level variables (what-broke #16) - plus
+the host firewall controls, which CIS AL2023 puts in Level 2 (what-broke #18).
+Deviations: `evidence/deviations-al2023.md`. Lives in its own directory, so `packer/build.sh` still builds RHEL only.
+Result (1.0.0): hardening 316 ok / 0 failed, verify gate 11/11 (`evidence/03-packer-build-al2023-1.0.0.log`);
+Wazuh SCA (CIS Amazon Linux 2023 v1.0.0) on a throwaway clone: **65%**, 117 pass / 63 fail
+(`evidence/09-sca-al2023-summary.json`) - most fails are the single-partition image layout and Level 2 audit rules.
+
 ## 5. Test the role (Molecule, on the Mac Studio)
 
 ```bash
@@ -96,8 +143,8 @@ cd ansible && molecule test | tee ../evidence/04-molecule.log
 
 ## 6. Deploy via Terraform through the gated pipeline
 
-PR → CI runs pre-commit + Molecule + `terraform plan` (plan posted to PR) → **manual approval
-environment `kronos-prod`** → `terraform apply`. Creates VM **301 `ch-app-01`** from 9201.
+PR → CI runs pre-commit + Molecule + `terraform plan` (saved plan uploaded as a build artefact for review) → **manual approval
+environment `kronos-prod`** → `terraform apply` of that saved plan only. Creates VM **301 `ch-app-01`** from 9201.
 
 ## 7. Prove it (AFTER evidence)
 

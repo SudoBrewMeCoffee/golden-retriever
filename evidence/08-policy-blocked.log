@@ -1,0 +1,19 @@
+# ch-mirror policy gate - DELIBERATELY UNSAFE plan (scratch copy, never applied, not committed)
+# 2026-10-16T17:47Z conftest 0.71.1 (OPA: 1.21.1), terraform v1.16.6
+# Overrides in a scratch copy of terraform/: cpu.type = "kvm64" in main.tf, plus demo.auto.tfvars:
+#   # DELIBERATELY UNSAFE - policy demo only, never applied
+#   tags         = ["oops"]
+#   vm_id        = 399
+#   template_id  = 9000
+#   ipv4_address = "dhcp"
+# terraform plan: Plan: 1 to add, 0 to change, 1 to destroy.  (VM 301 must be replaced)
+$ scripts/policy-check.sh ~/ch-mirror-scratch/policy-demo/terraform
+WARN - plan.json - main - proxmox_virtual_environment_vm.app: plan will REPLACE (destroy and recreate) this resource - check the plan before approving apply
+FAIL - plan.json - main - proxmox_virtual_environment_vm.app: clones template 9000 - only hardened ch-mirror templates 9200-9299 are allowed
+FAIL - plan.json - main - proxmox_virtual_environment_vm.app: cpu.type is "kvm64" - RHEL 9 needs x86-64-v2, use "host" (what-broke #11, #15)
+FAIL - plan.json - main - proxmox_virtual_environment_vm.app: ipv4 address is "dhcp" - static IPs only, the DHCP pool overlaps live guests (what-broke #4)
+FAIL - plan.json - main - proxmox_virtual_environment_vm.app: missing required tags ["ch-mirror", "cis-l1", "kronos-managed"]
+FAIL - plan.json - main - proxmox_virtual_environment_vm.app: vm_id 399 is outside the ch-mirror range 300-309
+
+9 tests, 3 passed, 1 warning, 5 failures, 0 exceptions
+exit code: 1 (non-zero = CI plan job fails, apply cannot be approved)

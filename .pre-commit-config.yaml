@@ -26,3 +26,11 @@ repos:
     hooks:
       - id: ansible-lint
         files: ^ansible/
+  - repo: local
+    hooks:
+      - id: conftest-verify
+        name: conftest verify (Terraform policy unit tests, no credentials)
+        entry: conftest verify --no-color -p policy/terraform
+        language: system
+        files: ^policy/terraform/
+        pass_filenames: false
