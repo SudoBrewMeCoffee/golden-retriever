@@ -1,0 +1,128 @@
+
+PLAY [Verify CIS controls on a real VM] ****************************************
+
+TASK [Gathering Facts] *********************************************************
+[WARNING]: Host '10.69.1.72' is using the discovered Python interpreter at '/usr/bin/python3.9', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.21/reference_appendices/interpreter_discovery.html for more information.
+ok: [10.69.1.72]
+
+TASK [Read effective sshd config] **********************************************
+ok: [10.69.1.72]
+
+TASK [Root SSH login disabled (CIS RHEL9 5.1.20)] ******************************
+ok: [10.69.1.72] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [SSH access limited to the admin account (CIS RHEL9 5.1.7 - the headline finding)] ***
+ok: [10.69.1.72] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [SELinux enforcing] *******************************************************
+ok: [10.69.1.72] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [Service state] ***********************************************************
+ok: [10.69.1.72]
+
+TASK [Auditd and firewalld running] ********************************************
+ok: [10.69.1.72] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [Admin account can still escalate (deviation D2 - no lockout)] ************
+ok: [10.69.1.72]
+
+TASK [Assert rocky kept NOPASSWD sudo] *****************************************
+ok: [10.69.1.72] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [Gather installed packages] ***********************************************
+ok: [10.69.1.72]
+
+TASK [NFS and rpcbind removed (CIS RHEL9 2.1.9 / 2.1.12, issue 1)] *************
+ok: [10.69.1.72] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [Read active authselect profile] ******************************************
+ok: [10.69.1.72]
+
+TASK [Custom authselect profile with faillock, pwhistory and no nullok (CIS RHEL9 5.3.2.x, issue 2)] ***
+ok: [10.69.1.72] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [Read PAM stacks] *********************************************************
+ok: [10.69.1.72] => (item=system-auth)
+ok: [10.69.1.72] => (item=password-auth)
+
+TASK [PAM stacks enforce faillock and password history, no nullok (issue 2)] ***
+ok: [10.69.1.72] => (item=/etc/pam.d/system-auth) => {
+    "ansible_loop_var": "item",
+    "changed": false,
+    "item": {
+        "ansible_loop_var": "item",
+        "changed": false,
+        "content": "IyBHZW5lcmF0ZWQgYnkgYXV0aHNlbGVjdCBvbiBGcmkgT2N0IDE2IDE3OjU5OjE2IDIwMjYKIyBEbyBub3QgbW9kaWZ5IHRoaXMgZmlsZSBtYW51YWxseS4KCmF1dGggICAgICAgIHJlcXVpcmVkICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHBhbV9lbnYuc28KYXV0aCAgICAgICAgcmVxdWlyZWQgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcGFtX2ZhaWxkZWxheS5zbyBkZWxheT0yMDAwMDAwCmF1dGggICAgICAgIHJlcXVpcmVkICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHBhbV9mYWlsbG9jay5zbyBwcmVhdXRoIHNpbGVudAphdXRoICAgICAgICBbZGVmYXVsdD0xIGlnbm9yZT1pZ25vcmUgc3VjY2Vzcz1va10gICAgICAgICBwYW1fdXNlcnR5cGUuc28gaXNyZWd1bGFyCmF1dGggICAgICAgIFtkZWZhdWx0PTEgaWdub3JlPWlnbm9yZSBzdWNjZXNzPW9rXSAgICAgICAgIHBhbV9sb2NhbHVzZXIuc28KYXV0aCAgICAgICAgc3VmZmljaWVudCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcGFtX3VuaXguc28KYXV0aCAgICAgICAgW2RlZmF1bHQ9MSBpZ25vcmU9aWdub3JlIHN1Y2Nlc3M9b2tdICAgICAgICAgcGFtX3VzZXJ0eXBlLnNvIGlzcmVndWxhcgphdXRoICAgICAgICBzdWZmaWNpZW50ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBwYW1fc3NzLnNvIGZvcndhcmRfcGFzcwphdXRoICAgICAgICByZXF1aXJlZCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBwYW1fZmFpbGxvY2suc28gYXV0aGZhaWwKYXV0aCAgICAgICAgcmVxdWlyZWQgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcGFtX2Rlbnkuc28KCmFjY291bnQgICAgIHJlcXVpcmVkICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHBhbV9mYWlsbG9jay5zbwphY2NvdW50ICAgICByZXF1aXJlZCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBwYW1fdW5peC5zbwphY2NvdW50ICAgICBzdWZmaWNpZW50ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBwYW1fbG9jYWx1c2VyLnNvCmFjY291bnQgICAgIHN1ZmZpY2llbnQgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHBhbV91c2VydHlwZS5zbyBpc3N5c3RlbQphY2NvdW50ICAgICBbZGVmYXVsdD1iYWQgc3VjY2Vzcz1vayB1c2VyX3Vua25vd249aWdub3JlXSBwYW1fc3NzLnNvCmFjY291bnQgICAgIHJlcXVpcmVkICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHBhbV9wZXJtaXQuc28KCnBhc3N3b3JkICAgIHJlcXVpc2l0ZSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHBhbV9wd3F1YWxpdHkuc28gbG9jYWxfdXNlcnNfb25seQpwYXNzd29yZCAgICBbZGVmYXVsdD0xIGlnbm9yZT1pZ25vcmUgc3VjY2Vzcz1va10gICAgICAgICBwYW1fbG9jYWx1c2VyLnNvCnBhc3N3b3JkICAgIHJlcXVpc2l0ZSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHBhbV9wd2hpc3Rvcnkuc28gdXNlX2F1dGh0b2sKcGFzc3dvcmQgICAgc3VmZmljaWVudCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcGFtX3VuaXguc28gc2hhNTEyIHNoYWRvdyAgdXNlX2F1dGh0b2sKcGFzc3dvcmQgICAgW3N1Y2Nlc3M9MSBkZWZhdWx0PWlnbm9yZV0gICAgICAgICAgICAgICAgICAgcGFtX2xvY2FsdXNlci5zbwpwYXNzd29yZCAgICBzdWZmaWNpZW50ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBwYW1fc3NzLnNvIHVzZV9hdXRodG9rCnBhc3N3b3JkICAgIHJlcXVpcmVkICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHBhbV9kZW55LnNvCgpzZXNzaW9uICAgICBvcHRpb25hbCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBwYW1fa2V5aW5pdC5zbyByZXZva2UKc2Vzc2lvbiAgICAgcmVxdWlyZWQgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcGFtX2xpbWl0cy5zbwotc2Vzc2lvbiAgICBvcHRpb25hbCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBwYW1fc3lzdGVtZC5zbwpzZXNzaW9uICAgICBbc3VjY2Vzcz0xIGRlZmF1bHQ9aWdub3JlXSAgICAgICAgICAgICAgICAgICBwYW1fc3VjY2VlZF9pZi5zbyBzZXJ2aWNlIGluIGNyb25kIHF1aWV0IHVzZV91aWQKc2Vzc2lvbiAgICAgcmVxdWlyZWQgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcGFtX3VuaXguc28Kc2Vzc2lvbiAgICAgb3B0aW9uYWwgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcGFtX3Nzcy5zbwo=",
+        "encoding": "base64",
+        "failed": false,
+        "item": "system-auth",
+        "source": "/etc/pam.d/system-auth"
+    },
+    "msg": "All assertions passed"
+}
+ok: [10.69.1.72] => (item=/etc/pam.d/password-auth) => {
+    "ansible_loop_var": "item",
+    "changed": false,
+    "item": {
+        "ansible_loop_var": "item",
+        "changed": false,
+        "content": "IyBHZW5lcmF0ZWQgYnkgYXV0aHNlbGVjdCBvbiBGcmkgT2N0IDE2IDE3OjU5OjE2IDIwMjYKIyBEbyBub3QgbW9kaWZ5IHRoaXMgZmlsZSBtYW51YWxseS4KCmF1dGggICAgICAgIHJlcXVpcmVkICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHBhbV9lbnYuc28KYXV0aCAgICAgICAgcmVxdWlyZWQgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcGFtX2ZhaWxkZWxheS5zbyBkZWxheT0yMDAwMDAwCmF1dGggICAgICAgIHJlcXVpcmVkICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHBhbV9mYWlsbG9jay5zbyBwcmVhdXRoIHNpbGVudAphdXRoICAgICAgICBbZGVmYXVsdD0xIGlnbm9yZT1pZ25vcmUgc3VjY2Vzcz1va10gICAgICAgICBwYW1fdXNlcnR5cGUuc28gaXNyZWd1bGFyCmF1dGggICAgICAgIFtkZWZhdWx0PTEgaWdub3JlPWlnbm9yZSBzdWNjZXNzPW9rXSAgICAgICAgIHBhbV9sb2NhbHVzZXIuc28KYXV0aCAgICAgICAgc3VmZmljaWVudCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcGFtX3VuaXguc28KYXV0aCAgICAgICAgW2RlZmF1bHQ9MSBpZ25vcmU9aWdub3JlIHN1Y2Nlc3M9b2tdICAgICAgICAgcGFtX3VzZXJ0eXBlLnNvIGlzcmVndWxhcgphdXRoICAgICAgICBzdWZmaWNpZW50ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBwYW1fc3NzLnNvIGZvcndhcmRfcGFzcwphdXRoICAgICAgICByZXF1aXJlZCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBwYW1fZmFpbGxvY2suc28gYXV0aGZhaWwKYXV0aCAgICAgICAgcmVxdWlyZWQgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcGFtX2Rlbnkuc28KCmFjY291bnQgICAgIHJlcXVpcmVkICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHBhbV9mYWlsbG9jay5zbwphY2NvdW50ICAgICByZXF1aXJlZCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBwYW1fdW5peC5zbwphY2NvdW50ICAgICBzdWZmaWNpZW50ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBwYW1fbG9jYWx1c2VyLnNvCmFjY291bnQgICAgIHN1ZmZpY2llbnQgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHBhbV91c2VydHlwZS5zbyBpc3N5c3RlbQphY2NvdW50ICAgICBbZGVmYXVsdD1iYWQgc3VjY2Vzcz1vayB1c2VyX3Vua25vd249aWdub3JlXSBwYW1fc3NzLnNvCmFjY291bnQgICAgIHJlcXVpcmVkICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHBhbV9wZXJtaXQuc28KCnBhc3N3b3JkICAgIHJlcXVpc2l0ZSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHBhbV9wd3F1YWxpdHkuc28gbG9jYWxfdXNlcnNfb25seQpwYXNzd29yZCAgICBbZGVmYXVsdD0xIGlnbm9yZT1pZ25vcmUgc3VjY2Vzcz1va10gICAgICAgICBwYW1fbG9jYWx1c2VyLnNvCnBhc3N3b3JkICAgIHJlcXVpc2l0ZSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHBhbV9wd2hpc3Rvcnkuc28gdXNlX2F1dGh0b2sKcGFzc3dvcmQgICAgc3VmZmljaWVudCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcGFtX3VuaXguc28gc2hhNTEyIHNoYWRvdyAgdXNlX2F1dGh0b2sKcGFzc3dvcmQgICAgW3N1Y2Nlc3M9MSBkZWZhdWx0PWlnbm9yZV0gICAgICAgICAgICAgICAgICAgcGFtX2xvY2FsdXNlci5zbwpwYXNzd29yZCAgICBzdWZmaWNpZW50ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBwYW1fc3NzLnNvIHVzZV9hdXRodG9rCnBhc3N3b3JkICAgIHJlcXVpcmVkICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHBhbV9kZW55LnNvCgpzZXNzaW9uICAgICBvcHRpb25hbCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBwYW1fa2V5aW5pdC5zbyByZXZva2UKc2Vzc2lvbiAgICAgcmVxdWlyZWQgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcGFtX2xpbWl0cy5zbwotc2Vzc2lvbiAgICBvcHRpb25hbCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBwYW1fc3lzdGVtZC5zbwpzZXNzaW9uICAgICBbc3VjY2Vzcz0xIGRlZmF1bHQ9aWdub3JlXSAgICAgICAgICAgICAgICAgICBwYW1fc3VjY2VlZF9pZi5zbyBzZXJ2aWNlIGluIGNyb25kIHF1aWV0IHVzZV91aWQKc2Vzc2lvbiAgICAgcmVxdWlyZWQgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcGFtX3VuaXguc28Kc2Vzc2lvbiAgICAgb3B0aW9uYWwgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcGFtX3Nzcy5zbwo=",
+        "encoding": "base64",
+        "failed": false,
+        "item": "password-auth",
+        "source": "/etc/pam.d/password-auth"
+    },
+    "msg": "All assertions passed"
+}
+
+TASK [Read password history setting] *******************************************
+ok: [10.69.1.72]
+
+TASK [Password history remembers at least 5 (CIS RHEL9 5.3.3.3.1, issue 2)] ****
+ok: [10.69.1.72] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [Read AIDE timer state] ***************************************************
+ok: [10.69.1.72]
+
+TASK [AIDE check scheduled by an enabled, active systemd timer (CIS RHEL9 6.1.2, issue 3)] ***
+[ERROR]: Task failed: Action failed: aidecheck.timer/service not enabled and active
+Origin: /Users/graham/ch-mirror-wt/remediation/ansible/verify-vm.yml:108:7
+
+106       register: aide_timer
+107
+108     - name: AIDE check scheduled by an enabled, active systemd timer (CIS RHEL9 6.1.2, issue 3)
+          ^ column 7
+
+fatal: [10.69.1.72]: FAILED! => {
+    "assertion": "ansible_facts.services['aidecheck.service'].status == 'enabled'",
+    "changed": false,
+    "evaluated_to": false,
+    "msg": "aidecheck.timer/service not enabled and active"
+}
+
+PLAY RECAP *********************************************************************
+10.69.1.72                 : ok=18   changed=0    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
