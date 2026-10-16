@@ -1,0 +1,36 @@
+# Guardrails for ansible-lockdown/RHEL9-CIS, verified against release 2.4.2
+# (defaults/main/main.yml and the pre-flight asserts in tasks/main.yml).
+# Intent: CIS Level 1 server profile, nothing that locks us out of a lab VM.
+# Every deviation from the benchmark is listed in evidence/deviations.md.
+
+rhel9cis_level_1: true
+rhel9cis_level_2: false          # role default is true
+
+# Do not apply the disruptive/high-risk changes in an unattended image build
+rhel9cis_disruption_high: false
+
+# Keep SELinux enforcing (CIS wants it on)
+rhel9cis_selinux_disable: false
+
+# No GRUB password in a lab template (would block console recovery) - DEVIATION D1
+rhel9cis_set_boot_pass: false
+
+# 5.1.7 SSH access restricted to the build/admin account.
+# NOTE: the original pack used rhel9cis_sshd: {allow_users: ...}, which the
+# role does not read - it would have been silently ignored (what-broke #1).
+rhel9cis_sshd_allowusers: "rocky"
+rhel9cis_sshd_allowgroups: ""
+
+# 5.2.4 "users must provide password for escalation" - DEVIATION D2.
+# rocky is a key-only automation/admin account with no password. With 5.2.4
+# on, the role strips its NOPASSWD sudo (what-broke #2) AND its own pre-flight
+# refuses to run as a passwordless build user (what-broke #9). Rule disabled;
+# exclusion list kept as belt-and-braces.
+rhel9cis_rule_5_2_4: false
+rhel9cis_sudoers_exclude_nopasswd_list:
+  - rocky
+
+# Role refuses to run with its example authselect profile name (pre-flight).
+rhel9cis_authselect_custom_profile_name: ch_mirror_cis
+
+rhel9cis_default_zone: public    # firewalld zone; public permits ssh

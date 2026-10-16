@@ -1,0 +1,19 @@
+---
+- name: CH-style base image — CIS RHEL 9 Level 1 + Wazuh-ready
+  hosts: all
+  become: true
+  vars:
+    build_version: "dev"
+  roles:
+    - role: RHEL9-CIS
+  post_tasks:
+    - name: Stamp image version (traceability for auditors)
+      ansible.builtin.copy:
+        dest: /etc/ch-mirror-release
+        content: "ch-rocky9-base {{ build_version }}\n"
+        mode: "0644"
+
+    - name: Ensure auditd enabled (common CIS finding)
+      ansible.builtin.service:
+        name: auditd
+        enabled: true

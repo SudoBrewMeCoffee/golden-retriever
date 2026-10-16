@@ -1,0 +1,7 @@
+---
+# Lint our code only; vendored roles (ansible/roles/, git-ignored) are pinned upstream code.
+exclude_paths:
+  - ansible/roles/
+  - .cache/
+  - .github/
+profile: production

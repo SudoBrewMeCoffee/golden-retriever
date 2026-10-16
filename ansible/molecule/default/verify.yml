@@ -1,0 +1,32 @@
+---
+# Container-provable checks only. SSH/firewall/SELinux/mount controls are
+# disabled by RHEL9-CIS in containers (vars/is_container.yml) and are verified
+# on the real VM by ansible/verify-vm.yml inside the Packer build (what-broke #12).
+- name: Verify role outcomes that a container can prove
+  hosts: all
+  become: true
+  tasks:
+    - name: Gather packages
+      ansible.builtin.package_facts:
+
+    - name: Auditd installed (CIS 6.3.1.1)
+      ansible.builtin.assert:
+        that: "'audit' in ansible_facts.packages"
+
+    - name: Admin account can still escalate without a password (deviation D2, what-broke 2)
+      ansible.builtin.command: sudo -l -U rocky
+      register: rocky_sudo
+      changed_when: false
+
+    - name: Assert rocky kept NOPASSWD
+      ansible.builtin.assert:
+        that: "'NOPASSWD' in rocky_sudo.stdout"
+
+    - name: Release stamp present
+      ansible.builtin.stat:
+        path: /etc/ch-mirror-release
+      register: rel
+
+    - name: Assert release stamp
+      ansible.builtin.assert:
+        that: rel.stat.exists

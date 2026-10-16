@@ -1,0 +1,31 @@
+---
+# Runs on Magnus (Mac Studio, Docker Desktop). Containers can't exercise
+# kernel/boot/mount controls, so those tags are skipped here and covered by
+# Wazuh SCA on the real VM.
+dependency:
+  name: galaxy
+  options:
+    requirements-file: ../../requirements.yml
+    roles-path: ../../roles
+driver:
+  name: docker
+platforms:
+  - name: rocky9
+    # Built from the official Rocky base + systemd (Dockerfile.j2) - the
+    # stock rockylinux:9 image has no init (what-broke #8). No third-party images.
+    image: ch-mirror/rocky9-systemd-v2
+    dockerfile: Dockerfile.j2
+    pre_build_image: false
+    command: /usr/sbin/init
+    privileged: true
+    cgroupns_mode: host
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+provisioner:
+  name: ansible
+  env:
+    ANSIBLE_ROLES_PATH: ../../roles
+  options:
+    skip-tags: "grub,boot,mounts,kernel,selinux,benchmark"  # benchmark = run-timestamp facts file, not a control (what-broke #10)
+verifier:
+  name: ansible

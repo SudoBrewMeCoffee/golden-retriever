@@ -1,0 +1,166 @@
+{"policy_id": "cis_rocky_linux_9", "id": 31500, "title": "Ensure mounting of squashfs filesystems is disabled.", "result": "passed", "compliance": "cis:1.1.1.1"}
+{"policy_id": "cis_rocky_linux_9", "id": 31501, "title": "Ensure mounting of udf filesystems is disabled.", "result": "passed", "compliance": "cis:1.1.1.2"}
+{"policy_id": "cis_rocky_linux_9", "id": 31502, "title": "Ensure /tmp is a separate partition.", "result": "failed", "compliance": "cis:1.1.2.1"}
+{"policy_id": "cis_rocky_linux_9", "id": 31503, "title": "Ensure nodev option set on /tmp partition.", "result": "failed", "compliance": "cis:1.1.2.2"}
+{"policy_id": "cis_rocky_linux_9", "id": 31504, "title": "Ensure noexec option set on /tmp partition.", "result": "failed", "compliance": "cis:1.1.2.3"}
+{"policy_id": "cis_rocky_linux_9", "id": 31505, "title": "Ensure nosuid option set on /tmp partition.", "result": "failed", "compliance": "cis:1.1.2.4"}
+{"policy_id": "cis_rocky_linux_9", "id": 31506, "title": "Ensure separate partition exists for /var.", "result": "failed", "compliance": "cis:1.1.3.1"}
+{"policy_id": "cis_rocky_linux_9", "id": 31507, "title": "Ensure nodev option set on /var partition.", "result": "failed", "compliance": "cis:1.1.3.2"}
+{"policy_id": "cis_rocky_linux_9", "id": 31508, "title": "Ensure nosuid option set on /var partition.", "result": "failed", "compliance": "cis:1.1.3.3"}
+{"policy_id": "cis_rocky_linux_9", "id": 31509, "title": "Ensure separate partition exists for /var/tmp.", "result": "failed", "compliance": "cis:1.1.4.1"}
+{"policy_id": "cis_rocky_linux_9", "id": 31510, "title": "Ensure noexec option set on /var/tmp partition.", "result": "failed", "compliance": "cis:1.1.4.2"}
+{"policy_id": "cis_rocky_linux_9", "id": 31511, "title": "Ensure nosuid option set on /var/tmp partition.", "result": "failed", "compliance": "cis:1.1.4.3"}
+{"policy_id": "cis_rocky_linux_9", "id": 31512, "title": "Ensure nodev option set on /var/tmp partition.", "result": "failed", "compliance": "cis:1.1.4.4"}
+{"policy_id": "cis_rocky_linux_9", "id": 31513, "title": "Ensure separate partition exists for /var/log.", "result": "failed", "compliance": "cis:1.1.5.1"}
+{"policy_id": "cis_rocky_linux_9", "id": 31514, "title": "Ensure nodev option set on /var/log partition.", "result": "failed", "compliance": "cis:1.1.5.2"}
+{"policy_id": "cis_rocky_linux_9", "id": 31515, "title": "Ensure noexec option set on /var/log partition.", "result": "failed", "compliance": "cis:1.1.5.3"}
+{"policy_id": "cis_rocky_linux_9", "id": 31516, "title": "Ensure nosuid option set on /var/log partition.", "result": "failed", "compliance": "cis:1.1.5.4"}
+{"policy_id": "cis_rocky_linux_9", "id": 31517, "title": "Ensure separate partition exists for /var/log/audit.", "result": "failed", "compliance": "cis:1.1.6.1"}
+{"policy_id": "cis_rocky_linux_9", "id": 31518, "title": "Ensure noexec option set on /var/log/audit partition.", "result": "failed", "compliance": "cis:1.1.6.2"}
+{"policy_id": "cis_rocky_linux_9", "id": 31519, "title": "Ensure nodev option set on /var/log/audit partition.", "result": "failed", "compliance": "cis:1.1.6.3"}
+{"policy_id": "cis_rocky_linux_9", "id": 31520, "title": "Ensure nosuid option set on /var/log/audit partition.", "result": "failed", "compliance": "cis:1.1.6.4"}
+{"policy_id": "cis_rocky_linux_9", "id": 31521, "title": "Ensure separate partition exists for /home.", "result": "failed", "compliance": "cis:1.1.7.1"}
+{"policy_id": "cis_rocky_linux_9", "id": 31522, "title": "Ensure nodev option set on /home partition.", "result": "failed", "compliance": "cis:1.1.7.2"}
+{"policy_id": "cis_rocky_linux_9", "id": 31523, "title": "Ensure nosuid option set on /home partition.", "result": "failed", "compliance": "cis:1.1.7.3"}
+{"policy_id": "cis_rocky_linux_9", "id": 31524, "title": "Ensure /dev/shm is a separate partition.", "result": "passed", "compliance": "cis:1.1.8.1"}
+{"policy_id": "cis_rocky_linux_9", "id": 31525, "title": "Ensure nodev option set on /dev/shm partition.", "result": "passed", "compliance": "cis:1.1.8.2"}
+{"policy_id": "cis_rocky_linux_9", "id": 31526, "title": "Ensure noexec option set on /dev/shm partition.", "result": "passed", "compliance": "cis:1.1.8.3"}
+{"policy_id": "cis_rocky_linux_9", "id": 31527, "title": "Ensure nosuid option set on /dev/shm partition.", "result": "passed", "compliance": "cis:1.1.8.4"}
+{"policy_id": "cis_rocky_linux_9", "id": 31528, "title": "Disable USB Storage.", "result": "passed", "compliance": "cis:1.1.9"}
+{"policy_id": "cis_rocky_linux_9", "id": 31529, "title": "Ensure gpgcheck is globally activated.", "result": "passed", "compliance": "cis:1.2.2"}
+{"policy_id": "cis_rocky_linux_9", "id": 31530, "title": "Ensure AIDE is installed.", "result": "passed", "compliance": "cis:1.3.1"}
+{"policy_id": "cis_rocky_linux_9", "id": 31531, "title": "Ensure filesystem integrity is regularly checked.", "result": "failed", "compliance": "cis:1.3.2"}
+{"policy_id": "cis_rocky_linux_9", "id": 31532, "title": "Ensure cryptographic mechanisms are used to protect the integrity of audit tools.", "result": "failed", "compliance": "cis:1.3.3"}
+{"policy_id": "cis_rocky_linux_9", "id": 31533, "title": "Ensure core dump storage is disabled.", "result": "passed", "compliance": "cis:1.5.1"}
+{"policy_id": "cis_rocky_linux_9", "id": 31534, "title": "Ensure core dump backtraces are disabled.", "result": "passed", "compliance": "cis:1.5.2"}
+{"policy_id": "cis_rocky_linux_9", "id": 31535, "title": "Ensure SELinux is installed.", "result": "passed", "compliance": "cis:1.6.1.1"}
+{"policy_id": "cis_rocky_linux_9", "id": 31536, "title": "Ensure SELinux is not disabled in bootloader configuration.", "result": "passed", "compliance": "cis:1.6.1.2"}
+{"policy_id": "cis_rocky_linux_9", "id": 31537, "title": "Ensure SELinux policy is configured.", "result": "passed", "compliance": "cis:1.6.1.3"}
+{"policy_id": "cis_rocky_linux_9", "id": 31538, "title": "Ensure the SELinux mode is not disabled.", "result": "passed", "compliance": "cis:1.6.1.4"}
+{"policy_id": "cis_rocky_linux_9", "id": 31539, "title": "Ensure the SELinux mode is enforcing.", "result": "passed", "compliance": "cis:1.6.1.5"}
+{"policy_id": "cis_rocky_linux_9", "id": 31540, "title": "Ensure no unconfined services exist.", "result": "failed", "compliance": "cis:1.6.1.6"}
+{"policy_id": "cis_rocky_linux_9", "id": 31541, "title": "Ensure SETroubleshoot is not installed.", "result": "passed", "compliance": "cis:1.6.1.7"}
+{"policy_id": "cis_rocky_linux_9", "id": 31542, "title": "Ensure the MCS Translation Service (mcstrans) is not installed.", "result": "passed", "compliance": "cis:1.6.1.8"}
+{"policy_id": "cis_rocky_linux_9", "id": 31543, "title": "Ensure message of the day is configured properly.", "result": "passed", "compliance": "cis:1.7.1"}
+{"policy_id": "cis_rocky_linux_9", "id": 31544, "title": "Ensure local login warning banner is configured properly.", "result": "passed", "compliance": "cis:1.7.2"}
+{"policy_id": "cis_rocky_linux_9", "id": 31545, "title": "Ensure remote login warning banner is configured properly.", "result": "passed", "compliance": "cis:1.7.3"}
+{"policy_id": "cis_rocky_linux_9", "id": 31546, "title": "Ensure permissions on /etc/motd are configured.", "result": "passed", "compliance": "cis:1.7.4"}
+{"policy_id": "cis_rocky_linux_9", "id": 31547, "title": "Ensure permissions on /etc/issue are configured.", "result": "passed", "compliance": "cis:1.7.5"}
+{"policy_id": "cis_rocky_linux_9", "id": 31548, "title": "Ensure permissions on /etc/issue.net are configured.", "result": "passed", "compliance": "cis:1.7.6"}
+{"policy_id": "cis_rocky_linux_9", "id": 31549, "title": "Ensure GNOME Display Manager is removed.", "result": "passed", "compliance": "cis:1.8.1"}
+{"policy_id": "cis_rocky_linux_9", "id": 31550, "title": "Ensure GDM login banner is configured.", "result": "not applicable", "compliance": "cis:1.8.2"}
+{"policy_id": "cis_rocky_linux_9", "id": 31551, "title": "Ensure XDCMP is not enabled.", "result": "passed", "compliance": "cis:1.8.10"}
+{"policy_id": "cis_rocky_linux_9", "id": 31553, "title": "Ensure system-wide crypto policy is not legacy.", "result": "passed", "compliance": "cis:1.10"}
+{"policy_id": "cis_rocky_linux_9", "id": 31554, "title": "Ensure time synchronization is in use.", "result": "passed", "compliance": "cis:2.1.1"}
+{"policy_id": "cis_rocky_linux_9", "id": 31555, "title": "Ensure chrony is configured.", "result": "passed", "compliance": "cis:2.1.2"}
+{"policy_id": "cis_rocky_linux_9", "id": 31556, "title": "Ensure xorg-x11-server-common is not installed.", "result": "passed", "compliance": "cis:2.2.1"}
+{"policy_id": "cis_rocky_linux_9", "id": 31557, "title": "Ensure Avahi Server is not installed.", "result": "passed", "compliance": "cis:2.2.2"}
+{"policy_id": "cis_rocky_linux_9", "id": 31558, "title": "Ensure CUPS is not installed.", "result": "passed", "compliance": "cis:2.2.3"}
+{"policy_id": "cis_rocky_linux_9", "id": 31559, "title": "Ensure DHCP Server is not installed.", "result": "passed", "compliance": "cis:2.2.4"}
+{"policy_id": "cis_rocky_linux_9", "id": 31560, "title": "Ensure DNS Server is not installed.", "result": "passed", "compliance": "cis:2.2.5"}
+{"policy_id": "cis_rocky_linux_9", "id": 31561, "title": "Ensure VSFTP Server is not installed.", "result": "passed", "compliance": "cis:2.2.6"}
+{"policy_id": "cis_rocky_linux_9", "id": 31562, "title": "Ensure TFTP Server is not installed.", "result": "passed", "compliance": "cis:2.2.7"}
+{"policy_id": "cis_rocky_linux_9", "id": 31563, "title": "Ensure a web server is not installed.", "result": "passed", "compliance": "cis:2.2.8"}
+{"policy_id": "cis_rocky_linux_9", "id": 31564, "title": "Ensure IMAP and POP3 server is not installed.", "result": "passed", "compliance": "cis:2.2.9"}
+{"policy_id": "cis_rocky_linux_9", "id": 31565, "title": "Ensure Samba is not installed.", "result": "passed", "compliance": "cis:2.2.10"}
+{"policy_id": "cis_rocky_linux_9", "id": 31566, "title": "Ensure HTTP Proxy Server is not installed.", "result": "passed", "compliance": "cis:2.2.11"}
+{"policy_id": "cis_rocky_linux_9", "id": 31567, "title": "Ensure net-snmp is not installed.", "result": "passed", "compliance": "cis:2.2.12"}
+{"policy_id": "cis_rocky_linux_9", "id": 31568, "title": "Ensure telnet-server is not installed.", "result": "passed", "compliance": "cis:2.2.13"}
+{"policy_id": "cis_rocky_linux_9", "id": 31569, "title": "Ensure dnsmasq is not installed.", "result": "passed", "compliance": "cis:2.2.14"}
+{"policy_id": "cis_rocky_linux_9", "id": 31570, "title": "Ensure mail transfer agent is configured for local-only mode.", "result": "passed", "compliance": "cis:2.2.15"}
+{"policy_id": "cis_rocky_linux_9", "id": 31571, "title": "Ensure nfs-utils is not installed or the nfs-server service is masked.", "result": "failed", "compliance": "cis:2.2.16"}
+{"policy_id": "cis_rocky_linux_9", "id": 31572, "title": "Ensure rpcbind is not installed or the rpcbind services are masked.", "result": "failed", "compliance": "cis:2.2.17"}
+{"policy_id": "cis_rocky_linux_9", "id": 31573, "title": "Ensure rsync-daemon is not installed or the rsyncd service is masked.", "result": "passed", "compliance": "cis:2.2.18"}
+{"policy_id": "cis_rocky_linux_9", "id": 31574, "title": "Ensure telnet client is not installed.", "result": "passed", "compliance": "cis:2.3.1"}
+{"policy_id": "cis_rocky_linux_9", "id": 31575, "title": "Ensure LDAP client is not installed.", "result": "passed", "compliance": "cis:2.3.2"}
+{"policy_id": "cis_rocky_linux_9", "id": 31576, "title": "Ensure TFTP client is not installed.", "result": "passed", "compliance": "cis:2.3.3"}
+{"policy_id": "cis_rocky_linux_9", "id": 31577, "title": "Ensure FTP client is not installed.", "result": "passed", "compliance": "cis:2.3.4"}
+{"policy_id": "cis_rocky_linux_9", "id": 31578, "title": "Ensure TIPC is disabled.", "result": "passed", "compliance": "cis:3.1.3"}
+{"policy_id": "cis_rocky_linux_9", "id": 31579, "title": "Ensure nftables is installed.", "result": "passed", "compliance": "cis:3.4.1.1"}
+{"policy_id": "cis_rocky_linux_9", "id": 31580, "title": "Ensure a single firewall configuration utility is in use.", "result": "passed", "compliance": "cis:3.4.1.2"}
+{"policy_id": "cis_rocky_linux_9", "id": 31581, "title": "Ensure at least one nftables table exists.", "result": "passed", "compliance": "cis:3.4.2.2"}
+{"policy_id": "cis_rocky_linux_9", "id": 31582, "title": "Ensure nftables base chains exist.", "result": "passed", "compliance": "cis:3.4.2.3"}
+{"policy_id": "cis_rocky_linux_9", "id": 31583, "title": "Ensure nftables default deny firewall policy.", "result": "failed", "compliance": "cis:3.4.2.7"}
+{"policy_id": "cis_rocky_linux_9", "id": 31584, "title": "Ensure auditd is installed.", "result": "passed", "compliance": "cis:4.1.1.1"}
+{"policy_id": "cis_rocky_linux_9", "id": 31585, "title": "Ensure auditing for processes that start prior to auditd is enabled.", "result": "passed", "compliance": "cis:4.1.1.2"}
+{"policy_id": "cis_rocky_linux_9", "id": 31586, "title": "Ensure audit_backlog_limit is sufficient.", "result": "passed", "compliance": "cis:4.1.1.3"}
+{"policy_id": "cis_rocky_linux_9", "id": 31587, "title": "Ensure auditd service is enabled.", "result": "passed", "compliance": "cis:4.1.1.4"}
+{"policy_id": "cis_rocky_linux_9", "id": 31588, "title": "Ensure audit log storage size is configured.", "result": "passed", "compliance": "cis:4.1.2.1"}
+{"policy_id": "cis_rocky_linux_9", "id": 31589, "title": "Ensure audit logs are not automatically deleted.", "result": "passed", "compliance": "cis:4.1.2.2"}
+{"policy_id": "cis_rocky_linux_9", "id": 31590, "title": "Ensure system is disabled when audit logs are full.", "result": "passed", "compliance": "cis:4.1.2.3"}
+{"policy_id": "cis_rocky_linux_9", "id": 31591, "title": "Ensure changes to system administration scope (sudoers) is collected.", "result": "passed", "compliance": "cis:4.1.3.1"}
+{"policy_id": "cis_rocky_linux_9", "id": 31592, "title": "Ensure the running and on disk configuration is the same.", "result": "passed", "compliance": "cis:4.1.3.21"}
+{"policy_id": "cis_rocky_linux_9", "id": 31593, "title": "Ensure only authorized groups are assigned ownership of audit log files.", "result": "passed", "compliance": "cis:4.1.4.3"}
+{"policy_id": "cis_rocky_linux_9", "id": 31594, "title": "Ensure audit configuration files are 640 or more restrictive.", "result": "passed", "compliance": "cis:4.1.4.5"}
+{"policy_id": "cis_rocky_linux_9", "id": 31595, "title": "Ensure audit configuration files are owned by root.", "result": "passed", "compliance": "cis:4.1.4.6"}
+{"policy_id": "cis_rocky_linux_9", "id": 31596, "title": "Ensure audit configuration files belong to group root.", "result": "passed", "compliance": "cis:4.1.4.7"}
+{"policy_id": "cis_rocky_linux_9", "id": 31597, "title": "Ensure audit tools are 755 or more restrictive.", "result": "passed", "compliance": "cis:4.1.4.8"}
+{"policy_id": "cis_rocky_linux_9", "id": 31598, "title": "Ensure audit tools are owned by root.", "result": "passed", "compliance": "cis:4.1.4.9"}
+{"policy_id": "cis_rocky_linux_9", "id": 31599, "title": "Ensure audit tools belong to group root.", "result": "passed", "compliance": "cis:4.1.4.10"}
+{"policy_id": "cis_rocky_linux_9", "id": 31600, "title": "Ensure rsyslog is installed.", "result": "passed", "compliance": "cis:4.2.1.1"}
+{"policy_id": "cis_rocky_linux_9", "id": 31601, "title": "Ensure rsyslog service is enabled.", "result": "failed", "compliance": "cis:4.2.1.2"}
+{"policy_id": "cis_rocky_linux_9", "id": 31602, "title": "Ensure journald is configured to send logs to rsyslog.", "result": "failed", "compliance": "cis:4.2.1.3"}
+{"policy_id": "cis_rocky_linux_9", "id": 31603, "title": "Ensure rsyslog default file permissions are configured.", "result": "failed", "compliance": "cis:4.2.1.4"}
+{"policy_id": "cis_rocky_linux_9", "id": 31604, "title": "Ensure rsyslog is configured to send logs to a remote log host.", "result": "failed", "compliance": "cis:4.2.1.6"}
+{"policy_id": "cis_rocky_linux_9", "id": 31605, "title": "Ensure rsyslog is not configured to receive logs from a remote client.", "result": "passed", "compliance": "cis:4.2.1.7"}
+{"policy_id": "cis_rocky_linux_9", "id": 31606, "title": "Ensure systemd-journal-remote is installed.", "result": "passed", "compliance": "cis:4.2.2.1.1"}
+{"policy_id": "cis_rocky_linux_9", "id": 31607, "title": "Ensure systemd-journal-remote is enabled.", "result": "passed", "compliance": "cis:4.2.2.1.3"}
+{"policy_id": "cis_rocky_linux_9", "id": 31608, "title": "Ensure journald is not configured to receive logs from a remote client.", "result": "passed", "compliance": "cis:4.2.2.1.4"}
+{"policy_id": "cis_rocky_linux_9", "id": 31609, "title": "Ensure journald service is enabled.", "result": "passed", "compliance": "cis:4.2.2.2"}
+{"policy_id": "cis_rocky_linux_9", "id": 31610, "title": "Ensure journald is configured to compress large log files.", "result": "failed", "compliance": "cis:4.2.2.3"}
+{"policy_id": "cis_rocky_linux_9", "id": 31611, "title": "Ensure journald is configured to write logfiles to persistent disk.", "result": "failed", "compliance": "cis:4.2.2.4"}
+{"policy_id": "cis_rocky_linux_9", "id": 31612, "title": "Ensure journald is not configured to send logs to rsyslog.", "result": "passed", "compliance": "cis:4.2.2.5"}
+{"policy_id": "cis_rocky_linux_9", "id": 31613, "title": "Ensure cron daemon is enabled.", "result": "passed", "compliance": "cis:5.1.1"}
+{"policy_id": "cis_rocky_linux_9", "id": 31614, "title": "Ensure permissions on /etc/crontab are configured.", "result": "passed", "compliance": "cis:5.1.2"}
+{"policy_id": "cis_rocky_linux_9", "id": 31615, "title": "Ensure permissions on /etc/cron.hourly are configured.", "result": "passed", "compliance": "cis:5.1.3"}
+{"policy_id": "cis_rocky_linux_9", "id": 31616, "title": "Ensure permissions on /etc/cron.daily are configured.", "result": "passed", "compliance": "cis:5.1.4"}
+{"policy_id": "cis_rocky_linux_9", "id": 31617, "title": "Ensure permissions on /etc/cron.weekly are configured.", "result": "passed", "compliance": "cis:5.1.5"}
+{"policy_id": "cis_rocky_linux_9", "id": 31618, "title": "Ensure permissions on /etc/cron.monthly are configured.", "result": "passed", "compliance": "cis:5.1.6"}
+{"policy_id": "cis_rocky_linux_9", "id": 31619, "title": "Ensure permissions on /etc/cron.d are configured.", "result": "passed", "compliance": "cis:5.1.7"}
+{"policy_id": "cis_rocky_linux_9", "id": 31620, "title": "Ensure permissions on /etc/ssh/sshd_config are configured.", "result": "passed", "compliance": "cis:5.2.1"}
+{"policy_id": "cis_rocky_linux_9", "id": 31621, "title": "Ensure SSH access is limited.", "result": "passed", "compliance": "cis:5.2.4"}
+{"policy_id": "cis_rocky_linux_9", "id": 31622, "title": "Ensure SSH LogLevel is appropriate.", "result": "passed", "compliance": "cis:5.2.5"}
+{"policy_id": "cis_rocky_linux_9", "id": 31623, "title": "Ensure SSH PAM is enabled.", "result": "passed", "compliance": "cis:5.2.6"}
+{"policy_id": "cis_rocky_linux_9", "id": 31624, "title": "Ensure SSH root login is disabled.", "result": "passed", "compliance": "cis:5.2.7"}
+{"policy_id": "cis_rocky_linux_9", "id": 31625, "title": "Ensure SSH HostbasedAuthentication is disabled.", "result": "passed", "compliance": "cis:5.2.8"}
+{"policy_id": "cis_rocky_linux_9", "id": 31626, "title": "Ensure SSH PermitEmptyPasswords is disabled.", "result": "passed", "compliance": "cis:5.2.9"}
+{"policy_id": "cis_rocky_linux_9", "id": 31627, "title": "Ensure SSH PermitUserEnvironment is disabled.", "result": "passed", "compliance": "cis:5.2.10"}
+{"policy_id": "cis_rocky_linux_9", "id": 31628, "title": "Ensure SSH IgnoreRhosts is enabled.", "result": "passed", "compliance": "cis:5.2.11"}
+{"policy_id": "cis_rocky_linux_9", "id": 31629, "title": "Ensure SSH X11 forwarding is disabled.", "result": "passed", "compliance": "cis:5.2.12"}
+{"policy_id": "cis_rocky_linux_9", "id": 31630, "title": "Ensure SSH AllowTcpForwarding is disabled.", "result": "passed", "compliance": "cis:5.2.13"}
+{"policy_id": "cis_rocky_linux_9", "id": 31631, "title": "Ensure system-wide crypto policy is not over-ridden.", "result": "passed", "compliance": "cis:5.2.14"}
+{"policy_id": "cis_rocky_linux_9", "id": 31632, "title": "Ensure SSH warning banner is configured.", "result": "passed", "compliance": "cis:5.2.15"}
+{"policy_id": "cis_rocky_linux_9", "id": 31633, "title": "Ensure SSH MaxAuthTries is set to 4 or less.", "result": "passed", "compliance": "cis:5.2.16"}
+{"policy_id": "cis_rocky_linux_9", "id": 31634, "title": "Ensure SSH MaxStartups is configured.", "result": "passed", "compliance": "cis:5.2.17"}
+{"policy_id": "cis_rocky_linux_9", "id": 31635, "title": "Ensure SSH MaxSessions is set to 10 or less.", "result": "passed", "compliance": "cis:5.2.18"}
+{"policy_id": "cis_rocky_linux_9", "id": 31636, "title": "Ensure SSH LoginGraceTime is set to one minute or less.", "result": "passed", "compliance": "cis:5.2.19"}
+{"policy_id": "cis_rocky_linux_9", "id": 31637, "title": "Ensure SSH Idle Timeout Interval is configured.", "result": "passed", "compliance": "cis:5.2.20"}
+{"policy_id": "cis_rocky_linux_9", "id": 31638, "title": "Ensure sudo is installed.", "result": "passed", "compliance": "cis:5.3.1"}
+{"policy_id": "cis_rocky_linux_9", "id": 31639, "title": "Ensure sudo commands use pty.", "result": "passed", "compliance": "cis:5.3.2"}
+{"policy_id": "cis_rocky_linux_9", "id": 31640, "title": "Ensure sudo log file exists.", "result": "failed", "compliance": "cis:5.3.3"}
+{"policy_id": "cis_rocky_linux_9", "id": 31641, "title": "Ensure users must provide password for escalation.", "result": "failed", "compliance": "cis:5.3.4"}
+{"policy_id": "cis_rocky_linux_9", "id": 31642, "title": "Ensure re-authentication for privilege escalation is not disabled globally.", "result": "passed", "compliance": "cis:5.3.5"}
+{"policy_id": "cis_rocky_linux_9", "id": 31643, "title": "Ensure sudo authentication timeout is configured correctly.", "result": "passed", "compliance": "cis:5.3.6"}
+{"policy_id": "cis_rocky_linux_9", "id": 31644, "title": "Ensure access to the su command is restricted.", "result": "passed", "compliance": "cis:5.3.7"}
+{"policy_id": "cis_rocky_linux_9", "id": 31645, "title": "Ensure custom authselect profile is used.", "result": "failed", "compliance": "cis:5.4.1"}
+{"policy_id": "cis_rocky_linux_9", "id": 31646, "title": "Ensure authselect includes with-faillock.", "result": "failed", "compliance": "cis:5.4.2"}
+{"policy_id": "cis_rocky_linux_9", "id": 31647, "title": "Ensure password creation requirements are configured.", "result": "failed", "compliance": "cis:5.5.1"}
+{"policy_id": "cis_rocky_linux_9", "id": 31648, "title": "Ensure lockout for failed password attempts is configured.", "result": "passed", "compliance": "cis:5.5.2"}
+{"policy_id": "cis_rocky_linux_9", "id": 31649, "title": "Ensure password reuse is limited.", "result": "failed", "compliance": "cis:5.5.3"}
+{"policy_id": "cis_rocky_linux_9", "id": 31650, "title": "Ensure password hashing algorithm is SHA-512 or yescrypt.", "result": "passed", "compliance": "cis:5.5.4"}
+{"policy_id": "cis_rocky_linux_9", "id": 31651, "title": "Ensure password expiration is 365 days or less.", "result": "passed", "compliance": "cis:5.6.1.1"}
+{"policy_id": "cis_rocky_linux_9", "id": 31652, "title": "Ensure minimum days between password changes is configured.", "result": "failed", "compliance": "cis:5.6.1.2"}
+{"policy_id": "cis_rocky_linux_9", "id": 31653, "title": "Ensure password expiration warning days is 7 or more.", "result": "failed", "compliance": "cis:5.6.1.3"}
+{"policy_id": "cis_rocky_linux_9", "id": 31654, "title": "Ensure inactive password lock is 30 days or less.", "result": "failed", "compliance": "cis:5.6.1.4"}
+{"policy_id": "cis_rocky_linux_9", "id": 31655, "title": "Ensure default group for the root account is GID 0.", "result": "passed", "compliance": "cis:5.6.4"}
+{"policy_id": "cis_rocky_linux_9", "id": 31656, "title": "Ensure permissions on /etc/passwd are configured.", "result": "passed", "compliance": "cis:6.1.1"}
+{"policy_id": "cis_rocky_linux_9", "id": 31657, "title": "Ensure permissions on /etc/passwd- are configured.", "result": "passed", "compliance": "cis:6.1.2"}
+{"policy_id": "cis_rocky_linux_9", "id": 31658, "title": "Ensure permissions on /etc/group are configured.", "result": "passed", "compliance": "cis:6.1.3"}
+{"policy_id": "cis_rocky_linux_9", "id": 31659, "title": "Ensure permissions on /etc/group- are configured.", "result": "passed", "compliance": "cis:6.1.4"}
+{"policy_id": "cis_rocky_linux_9", "id": 31660, "title": "Ensure permissions on /etc/shadow are configured.", "result": "passed", "compliance": "cis:6.1.5"}
+{"policy_id": "cis_rocky_linux_9", "id": 31661, "title": "Ensure permissions on /etc/shadow- are configured.", "result": "passed", "compliance": "cis:6.1.6"}
+{"policy_id": "cis_rocky_linux_9", "id": 31662, "title": "Ensure permissions on /etc/gshadow are configured.", "result": "passed", "compliance": "cis:6.1.7"}
+{"policy_id": "cis_rocky_linux_9", "id": 31663, "title": "Ensure permissions on /etc/gshadow- are configured.", "result": "passed", "compliance": "cis:6.1.8"}
+{"policy_id": "cis_rocky_linux_9", "id": 31664, "title": "Ensure accounts in /etc/passwd use shadowed passwords.", "result": "passed", "compliance": "cis:6.2.1"}
+{"policy_id": "cis_rocky_linux_9", "id": 31665, "title": "Ensure /etc/shadow password fields are not empty.", "result": "passed", "compliance": "cis:6.2.2"}
+{"policy_id": "cis_rocky_linux_9", "id": 31666, "title": "Ensure root is the only UID 0 account.", "result": "passed", "compliance": "cis:6.2.9"}

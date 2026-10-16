@@ -1,0 +1,14 @@
+---
+roles:
+  - name: RHEL9-CIS
+    src: https://github.com/ansible-lockdown/RHEL9-CIS
+    scm: git
+    version: 2.4.2   # pinned release; guardrail var names verified against this tag
+
+collections:
+  # Needed by RHEL9-CIS 2.4.2 (see its collections/requirements.yml)
+  - name: community.general
+  - name: community.crypto
+  - name: ansible.posix
+  # Needed by the Molecule docker driver
+  - name: community.docker

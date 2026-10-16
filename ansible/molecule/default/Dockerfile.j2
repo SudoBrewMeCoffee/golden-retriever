@@ -1,0 +1,10 @@
+FROM docker.io/rockylinux/rockylinux:9
+# Official Rocky base + the packages the GenericCloud image ships that the CIS
+# role expects (init, PAM/authselect, audit, cron, time sync, crypto policies).
+RUN dnf -y install systemd python3 sudo openssh-server procps-ng \
+      authselect audit cronie chrony crypto-policies-scripts \
+      firewalld rsyslog logrotate policycoreutils \
+ && dnf clean all \
+ && systemctl mask systemd-logind.service getty.target console-getty.service
+STOPSIGNAL SIGRTMIN+3
+CMD ["/usr/sbin/init"]

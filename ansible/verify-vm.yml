@@ -1,0 +1,56 @@
+---
+# Post-hardening checks against a REAL VM (Packer build VM or a deployed guest).
+# Molecule can't prove these: RHEL9-CIS disables 78 controls in containers
+# (vars/is_container.yml), including SSH, firewall, SELinux and mounts
+# (what-broke #12). Any failure here fails the Packer build, so an image that
+# doesn't actually enforce the controls is never published.
+- name: Verify CIS controls on a real VM
+  hosts: all
+  become: true
+  gather_facts: true
+  tasks:
+    - name: Read effective sshd config
+      ansible.builtin.command: sshd -T
+      register: sshd
+      changed_when: false
+
+    - name: Root SSH login disabled (CIS RHEL9 5.1.20)
+      ansible.builtin.assert:
+        that: "'permitrootlogin no' in sshd.stdout"
+        fail_msg: "PermitRootLogin is not 'no' in the effective sshd config"
+
+    - name: SSH access limited to the admin account (CIS RHEL9 5.1.7 - the headline finding)
+      ansible.builtin.assert:
+        that: "'allowusers rocky' in sshd.stdout"
+        fail_msg: "AllowUsers not in effect - SSH access is not limited"
+
+    - name: SELinux enforcing
+      ansible.builtin.assert:
+        that: ansible_facts.selinux.status == 'enabled' and ansible_facts.selinux.mode == 'enforcing'
+
+    - name: Service state
+      ansible.builtin.service_facts:
+
+    - name: Auditd and firewalld running
+      ansible.builtin.assert:
+        that:
+          - ansible_facts.services['auditd.service'].state == 'running'
+          - ansible_facts.services['firewalld.service'].state == 'running'
+
+    - name: Admin account can still escalate (deviation D2 - no lockout)
+      ansible.builtin.command: sudo -n -l -U rocky
+      register: rocky_sudo
+      changed_when: false
+
+    - name: Assert rocky kept NOPASSWD sudo
+      ansible.builtin.assert:
+        that: "'NOPASSWD' in rocky_sudo.stdout"
+
+    - name: Release stamp present
+      ansible.builtin.command: cat /etc/ch-mirror-release
+      register: rel
+      changed_when: false
+
+    - name: Show image version
+      ansible.builtin.debug:
+        msg: "{{ rel.stdout }}"

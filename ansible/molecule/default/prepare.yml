@@ -1,0 +1,29 @@
+---
+# Recreate what cloud-init does on the real image: a key-only "rocky" admin
+# user with NOPASSWD sudo, plus sshd present, so verify can prove the CIS
+# guardrails (what-broke #1 and #2) actually take effect.
+- name: Prepare
+  hosts: all
+  become: true
+  tasks:
+    - name: Base packages present in the cloud image
+      ansible.builtin.dnf:
+        name: [openssh-server, sudo, python3]
+        state: present
+
+    - name: Cloud-init style admin user
+      ansible.builtin.user:
+        name: rocky
+        groups: wheel
+        password_lock: true
+
+    - name: Cloud-init style NOPASSWD sudo rule
+      ansible.builtin.copy:
+        dest: /etc/sudoers.d/90-cloud-init-users
+        content: "rocky ALL=(ALL) NOPASSWD:ALL\n"
+        mode: "0440"
+        validate: /usr/sbin/visudo -cf %s
+
+    - name: Host keys so sshd -T works
+      ansible.builtin.command: ssh-keygen -A
+      changed_when: false

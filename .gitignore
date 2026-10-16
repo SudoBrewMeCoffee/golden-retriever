@@ -1,0 +1,13 @@
+*.tfstate
+*.tfstate.*
+.terraform/
+*.pkrvars.hcl
+!example.pkrvars.hcl
+variables.json
+ansible/roles/*
+!ansible/roles/.gitkeep
+.env
+tfplan
+*.log.tmp
+# internal KRONOS change logs live on the Proxmox host
+kronos/changelog-*

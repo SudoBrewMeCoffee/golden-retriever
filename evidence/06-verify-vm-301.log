@@ -1,0 +1,56 @@
+
+PLAY [Verify CIS controls on a real VM] ****************************************
+
+TASK [Gathering Facts] *********************************************************
+[WARNING]: Host '10.69.1.72' is using the discovered Python interpreter at '/usr/bin/python3.9', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.21/reference_appendices/interpreter_discovery.html for more information.
+ok: [10.69.1.72]
+
+TASK [Read effective sshd config] **********************************************
+ok: [10.69.1.72]
+
+TASK [Root SSH login disabled (CIS RHEL9 5.1.20)] ******************************
+ok: [10.69.1.72] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [SSH access limited to the admin account (CIS RHEL9 5.1.7 - the headline finding)] ***
+ok: [10.69.1.72] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [SELinux enforcing] *******************************************************
+ok: [10.69.1.72] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [Service state] ***********************************************************
+ok: [10.69.1.72]
+
+TASK [Auditd and firewalld running] ********************************************
+ok: [10.69.1.72] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [Admin account can still escalate (deviation D2 - no lockout)] ************
+ok: [10.69.1.72]
+
+TASK [Assert rocky kept NOPASSWD sudo] *****************************************
+ok: [10.69.1.72] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+
+TASK [Release stamp present] ***************************************************
+ok: [10.69.1.72]
+
+TASK [Show image version] ******************************************************
+ok: [10.69.1.72] => {
+    "msg": "ch-rocky9-base 1.0.0"
+}
+
+PLAY RECAP *********************************************************************
+10.69.1.72                 : ok=11   changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   

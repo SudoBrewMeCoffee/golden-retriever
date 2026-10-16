@@ -1,0 +1,136 @@
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # proxmox_virtual_environment_vm.app will be created
+  + resource "proxmox_virtual_environment_vm" "app" {
+      + acpi                                 = true
+      + bios                                 = "seabios"
+      + boot_order                           = (known after apply)
+      + delete_unreferenced_disks_on_destroy = true
+      + description                          = "Deployed from CIS-hardened template 9201 via ch-mirror pipeline. Managed by Terraform — do not edit in the UI."
+      + hotplug                              = (known after apply)
+      + id                                   = (known after apply)
+      + ipv4_addresses                       = (known after apply)
+      + ipv6_addresses                       = (known after apply)
+      + keyboard_layout                      = "en-us"
+      + mac_addresses                        = (known after apply)
+      + migrate                              = false
+      + name                                 = "ch-app-01"
+      + network_device                       = [
+          + {
+              + bridge      = "vmbr0"
+              + enabled     = true
+              + firewall    = false
+              + mac_address = (known after apply)
+              + model       = "virtio"
+              + mtu         = 0
+              + queues      = 0
+              + rate_limit  = 0
+              + vlan_id     = 0
+            },
+        ]
+      + network_interface_names              = (known after apply)
+      + node_name                            = "pve"
+      + on_boot                              = true
+      + protection                           = false
+      + purge_on_destroy                     = true
+      + reboot                               = false
+      + reboot_after_update                  = true
+      + scsi_hardware                        = "virtio-scsi-pci"
+      + started                              = true
+      + stop_on_destroy                      = false
+      + tablet_device                        = true
+      + tags                                 = [
+          + "ch-mirror",
+          + "cis-l1",
+          + "kronos-managed",
+        ]
+      + template                             = false
+      + timeout_clone                        = 1800
+      + timeout_create                       = 1800
+      + timeout_migrate                      = 1800
+      + timeout_move_disk                    = 1800
+      + timeout_reboot                       = 1800
+      + timeout_shutdown_vm                  = 1800
+      + timeout_start_vm                     = 1800
+      + timeout_stop_vm                      = 300
+      + vm_id                                = 301
+
+      + agent {
+          + enabled = true
+          + timeout = "15m"
+          + trim    = false
+          + type    = "virtio"
+        }
+
+      + clone {
+          + full    = true
+          + retries = 1
+          + vm_id   = 9201
+        }
+
+      + cpu {
+          + cores      = 2
+          + hotplugged = 0
+          + limit      = 0
+          + numa       = false
+          + sockets    = 1
+          + type       = "host"
+          + units      = (known after apply)
+        }
+
+      + initialization {
+          + datastore_id         = "local-zfs"
+          + file_format          = (known after apply)
+          + meta_data_file_id    = (known after apply)
+          + network_data_file_id = (known after apply)
+          + type                 = (known after apply)
+          + upgrade              = (known after apply)
+          + user_data_file_id    = (known after apply)
+          + vendor_data_file_id  = (known after apply)
+
+          + ip_config {
+              + ipv4 {
+                  + address = "10.69.1.72/24"
+                  + gateway = "10.69.1.1"
+                }
+            }
+
+          + user_account {
+              + keys     = [
+                  + "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBXxTmOErrovZvoixingReRQ2V2ClYEAijYg9Kb8lvp6 graham@magnus-claude",
+                ]
+              + username = "rocky"
+            }
+        }
+
+      + memory {
+          + dedicated      = 2048
+          + floating       = 0
+          + keep_hugepages = false
+          + shared         = 0
+        }
+
+      + operating_system {
+          + type = "l26"
+        }
+
+      + vga (known after apply)
+    }
+
+Plan: 1 to add, 0 to change, 0 to destroy.
+
+Changes to Outputs:
+  + ipv4  = "10.69.1.72/24"
+  + vm_id = 301
+
+─────────────────────────────────────────────────────────────────────────────
+
+Saved the plan to: tfplan
+
+To perform exactly these actions, run the following command to apply:
+    terraform apply "tfplan"

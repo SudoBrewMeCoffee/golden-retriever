@@ -1,0 +1,28 @@
+# ansible-core 2.21 does not support Python 3.15 (what-broke #5) - pin hook envs
+default_language_version:
+  python: python3.13
+
+# Same gates as companieshouse/*-terraform (fmt, docs, tflint, tfsec).
+# tfsec is now part of Trivy, so Trivy config scan replaces it.
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: check-merge-conflict
+      - id: detect-private-key
+      - id: end-of-file-fixer
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.96.1
+    hooks:
+      - id: terraform_fmt
+      - id: terraform_validate
+      - id: terraform_docs
+        args: ["--args=--sort-by required"]
+      - id: terraform_tflint
+      - id: terraform_trivy
+        args: ["--args=--severity HIGH,CRITICAL"]
+  - repo: https://github.com/ansible/ansible-lint
+    rev: v26.10.1
+    hooks:
+      - id: ansible-lint
+        files: ^ansible/
