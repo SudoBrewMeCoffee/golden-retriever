@@ -13,7 +13,7 @@ platforms:
   - name: rocky9
     # Built from the official Rocky base + systemd (Dockerfile.j2) - the
     # stock rockylinux:9 image has no init (what-broke #8). No third-party images.
-    image: ch-mirror/rocky9-systemd-v2
+    image: ch-mirror/rocky9-systemd-v3
     dockerfile: Dockerfile.j2
     pre_build_image: false
     command: /usr/sbin/init
