@@ -11,8 +11,9 @@ export PATH=/opt/homebrew/bin:$PATH
 repo="$(cd "$(dirname "$0")/.." && pwd)"
 tfdir="${1:-$repo/terraform}"
 
-plan_json="$(mktemp "${TMPDIR:-/tmp}/ch-mirror-plan.XXXXXX")"
-trap 'rm -f "$plan_json"' EXIT
+work="$(mktemp -d "${TMPDIR:-/tmp}/ch-mirror-policy.XXXXXX")"
+trap 'rm -rf "$work"' EXIT
 
-terraform -chdir="$tfdir" show -json tfplan > "$plan_json"
-conftest test --no-color --parser json -p "$repo/policy/terraform" "$plan_json"
+terraform -chdir="$tfdir" show -json tfplan > "$work/plan.json"
+cd "$work"
+conftest test --no-color --parser json -p "$repo/policy/terraform" plan.json

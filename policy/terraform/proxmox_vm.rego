@@ -39,7 +39,7 @@ deny contains msg if {
 	present := {t | some t in object.get(rc.change.after, "tags", [])}
 	missing := required_tags - present
 	count(missing) > 0
-	msg := sprintf("%s: missing required tags %v (need ch-mirror, cis-l1, kronos-managed)", [rc.address, sort(missing)])
+	msg := sprintf("%s: missing required tags %v", [rc.address, sort(missing)])
 }
 
 # what-broke #4: a DHCP lease handed out the address of a live container (duplicate IP).
