@@ -29,6 +29,12 @@ Fixed 1.0.0 -> 1.0.1 (5), regressed (0):
 Raw: `10-sca-1.0.1-summary.json`, `10-sca-1.0.1-checks.jsonl`.
 
 ## What the deploy found (post-deploy verify: 18 ok, 1 failed)
-`06-verify-vm-301-1.0.1.log` - the AIDE check failed on the *deployed* VM although it passed 28/28 inside the build. The first `aide --check` after boot exited 7 ("differences found"): the AIDE baseline is created during the image build, then cloud-init legitimately changes files on first boot (hostname, SSH host keys, network config). Every new VM would raise a false integrity alert - which trains people to ignore AIDE. Raised as **#17**; fix in image 1.0.2 (per-instance baseline on first boot, after cloud-init), together with **#14** (old kernel RPM retained).
+**What the verifier observed:** `06-verify-vm-301-1.0.1.log` fails one assertion on the *deployed* VM: `aidecheck.service` is not in an enabled/OK state. The same check passed 28/28 inside the build. The verifier only checks unit state; it does not run `aide --check` itself.
+
+**What the diagnosis found:** this comes from a separate read-only check, not from the verifier log. The unit's journal (`10-aide-301-first-check.txt`) shows the first scheduled check exited **7**, meaning differences were found: 68 added, 1 removed and 62 changed of 40,041 entries. The entry list points to two causes:
+1. **The baseline is taken part-way through the build.** Most entries are changes the CIS role made *after* it initialised AIDE: journal-remote/upload packages and units, sysctl.d and audit rules, crypto-policy back-ends, passwd/group/shadow, the new kernel's boot entries, `/etc/ch-mirror-release` and the aidecheck units themselves.
+2. **Per-instance first-boot changes** made by cloud-init and the clone: hostname, hosts, machine-id, ifcfg-eth0 and persistent-net rules.
+
+Either cause alone means every new VM raises a false integrity alert, which trains people to ignore AIDE. Raised as **#17**. The fix in image 1.0.2 removes the database from the image and creates a per-instance baseline on first boot, after cloud-init. 1.0.2 also adds a post-deploy check that actually runs `aide --check`. **#14** (old kernel RPM retained) is fixed in the same image.
 
 This is why there are two verify points: a build gate that proves the image, and a post-deploy check that proves the instance.

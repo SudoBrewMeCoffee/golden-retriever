@@ -1,0 +1,136 @@
+# VM 301 (image 1.0.1) - first aidecheck.service run after deploy
+# Source: journalctl -u aidecheck.service on 10.69.1.72, read-only, 16 Oct 2026.
+# systemctl show aidecheck.service: Result=exit-code ExecMainStatus=7 (18:41:14 UTC)
+# AIDE summary: 40041 entries checked; added 68, removed 1, changed 62
+# Entry list (added, removed, changed):
+d+++++++++++++++++: /etc/ansible
+d+++++++++++++++++: /etc/ansible/facts.d
+f+++++++++++++++++: /etc/ansible/facts.d/compliance_facts.fact
+f+++++++++++++++++: /etc/audit/audit.rules.prev
+f+++++++++++++++++: /etc/audit/rules.d/99_auditd.rules
+f+++++++++++++++++: /etc/ch-mirror-release
+f+++++++++++++++++: /etc/kernel/cmdline
+f+++++++++++++++++: /etc/sysctl.d/60-disable_ipv6.conf
+f+++++++++++++++++: /etc/sysctl.d/60-kernel_sysctl.conf
+f+++++++++++++++++: /etc/sysctl.d/60-netipv4_sysctl.conf
+f+++++++++++++++++: /etc/sysctl.d/60-netipv6_sysctl.conf
+f+++++++++++++++++: /etc/systemd/journal-remote.conf
+f+++++++++++++++++: /etc/systemd/journal-upload.conf
+f+++++++++++++++++: /etc/systemd/journald.conf.d/forwardtosyslog.conf
+f+++++++++++++++++: /etc/systemd/journald.conf.d/rotation.conf
+f+++++++++++++++++: /etc/systemd/journald.conf.d/storage.conf
+l+++++++++++++++++: /etc/systemd/system/multi-user.target.wants/aidecheck.service
+l+++++++++++++++++: /etc/systemd/system/multi-user.target.wants/aidecheck.timer
+l+++++++++++++++++: /etc/systemd/system/multi-user.target.wants/systemd-journal-upload.service
+l+++++++++++++++++: /etc/systemd/system/systemd-journal-remote.service
+l+++++++++++++++++: /etc/systemd/system/systemd-journal-remote.socket
+f+++++++++++++++++: /usr/bin/info
+l+++++++++++++++++: /usr/lib/.build-id/53/4d7d3bd77d883e7948334d193483589d8796f7
+l+++++++++++++++++: /usr/lib/.build-id/59/a68e56d5456df11d1339f57f6e91a3af7581f2
+l+++++++++++++++++: /usr/lib/.build-id/67/a1e91e62e8c552ee05fd5b7d508d821269d1a1
+l+++++++++++++++++: /usr/lib/.build-id/95/a40cea6041f2635741bdc790bd6002ec4b63ef
+l+++++++++++++++++: /usr/lib/.build-id/9b/3ffacd027d3b949281a159477d4396b019ba1f
+l+++++++++++++++++: /usr/lib/.build-id/9b/665b2fd9375774245bdb4f47c5ee8c0a08adc8
+f+++++++++++++++++: /usr/lib/firewalld/services/systemd-journal-gatewayd.xml
+f+++++++++++++++++: /usr/lib/firewalld/services/systemd-journal-remote.xml
+f+++++++++++++++++: /usr/lib/systemd/system/systemd-journal-gatewayd.service
+f+++++++++++++++++: /usr/lib/systemd/system/systemd-journal-gatewayd.socket
+f+++++++++++++++++: /usr/lib/systemd/system/systemd-journal-remote.service
+f+++++++++++++++++: /usr/lib/systemd/system/systemd-journal-remote.socket
+f+++++++++++++++++: /usr/lib/systemd/system/systemd-journal-upload.service
+f+++++++++++++++++: /usr/lib/systemd/systemd-journal-gatewayd
+f+++++++++++++++++: /usr/lib/systemd/systemd-journal-remote
+f+++++++++++++++++: /usr/lib/systemd/systemd-journal-upload
+f+++++++++++++++++: /usr/lib/sysusers.d/systemd-remote.conf
+l+++++++++++++++++: /usr/lib64/libmicrohttpd.so.12
+f+++++++++++++++++: /usr/lib64/libmicrohttpd.so.12.57.0
+f+++++++++++++++++: /usr/sbin/fix-info-dir
+f+++++++++++++++++: /usr/sbin/install-info
+d+++++++++++++++++: /usr/share/doc/libmicrohttpd
+f+++++++++++++++++: /usr/share/doc/libmicrohttpd/README
+f+++++++++++++++++: /usr/share/info/dir
+f+++++++++++++++++: /usr/share/info/info-stnd.info.gz
+d+++++++++++++++++: /usr/share/licenses/info
+f+++++++++++++++++: /usr/share/licenses/info/COPYING
+d+++++++++++++++++: /usr/share/licenses/libmicrohttpd
+f+++++++++++++++++: /usr/share/licenses/libmicrohttpd/COPYING
+f+++++++++++++++++: /usr/share/man/man1/info.1.gz
+f+++++++++++++++++: /usr/share/man/man1/install-info.1.gz
+f+++++++++++++++++: /usr/share/man/man5/info.5.gz
+f+++++++++++++++++: /usr/share/man/man5/journal-remote.conf.5.gz
+f+++++++++++++++++: /usr/share/man/man5/journal-remote.conf.d.5.gz
+f+++++++++++++++++: /usr/share/man/man5/journal-upload.conf.5.gz
+f+++++++++++++++++: /usr/share/man/man5/journal-upload.conf.d.5.gz
+f+++++++++++++++++: /usr/share/man/man8/systemd-journal-gatewayd.8.gz
+f+++++++++++++++++: /usr/share/man/man8/systemd-journal-gatewayd.service.8.gz
+f+++++++++++++++++: /usr/share/man/man8/systemd-journal-gatewayd.socket.8.gz
+f+++++++++++++++++: /usr/share/man/man8/systemd-journal-remote.8.gz
+f+++++++++++++++++: /usr/share/man/man8/systemd-journal-remote.service.8.gz
+f+++++++++++++++++: /usr/share/man/man8/systemd-journal-remote.socket.8.gz
+f+++++++++++++++++: /usr/share/man/man8/systemd-journal-upload.8.gz
+f+++++++++++++++++: /usr/share/man/man8/systemd-journal-upload.service.8.gz
+d+++++++++++++++++: /usr/share/systemd/gatewayd
+f+++++++++++++++++: /usr/share/systemd/gatewayd/browse.html
+l-----------------: /etc/systemd/system/multi-user.target.wants/rsyslog.service
+d = ...   i.  ..  : /boot/efi/EFI/BOOT
+f = ...   i.. ..  : /boot/efi/EFI/BOOT/BOOTX64.EFI
+f = ...   i.. ..  : /boot/efi/EFI/BOOT/fbx64.efi
+f = ...   i.. ..  : /boot/efi/EFI/BOOT/grub.cfg
+f = ...   i.. ..  : /boot/efi/EFI/BOOT/grubx64.efi
+f = ...   i.. ..  : /boot/efi/EFI/BOOT/mmx64.efi
+d = ...   i.  ..  : /boot/efi/EFI/rocky
+f = ...   i.. ..  : /boot/efi/EFI/rocky/BOOTX64.CSV
+f = ...   i.. ..  : /boot/efi/EFI/rocky/grub.cfg
+f = ...   i.. ..  : /boot/efi/EFI/rocky/grubx64.efi
+f = ...   i.. ..  : /boot/efi/EFI/rocky/mmx64.efi
+f = ...   i.. ..  : /boot/efi/EFI/rocky/shim.efi
+f = ...   i.. ..  : /boot/efi/EFI/rocky/shimx64-rocky.efi
+f = ...   i.. ..  : /boot/efi/EFI/rocky/shimx64.efi
+f > ...   i.H.... : /boot/loader/entries/2dcb500578784e46bfd6e8b1ca54a2fa-0-rescue.conf
+f > ...   i.H.... : /boot/loader/entries/2dcb500578784e46bfd6e8b1ca54a2fa-5.14.0-687.10.1.el9_8.0.1.x86_64.conf
+f > ...   i.H.... : /boot/loader/entries/8f90caf9af6249d0aa6d7ab0e831b503-0-rescue.conf
+f > ...   i.H.... : /boot/loader/entries/8f90caf9af6249d0aa6d7ab0e831b503-5.14.0-687.58.1.el9_8.x86_64.conf
+f > ...   i.H.... : /etc/aide.conf
+d > ...   .. .... : /etc/audit
+f > ...   ..H.... : /etc/audit/audit.rules
+f < ...   i.H.... : /etc/audit/auditd.conf
+f = p..   ...A... : /etc/audit/plugins.d/sedispatch.conf
+d > ...   .. .... : /etc/audit/rules.d
+f   p..      +..  : /etc/crypto-policies/back-ends/bind.config
+f   p..      +..  : /etc/crypto-policies/back-ends/gnutls.config
+f   p..      +..  : /etc/crypto-policies/back-ends/java.config
+f   p..      +..  : /etc/crypto-policies/back-ends/javasystem.config
+f   p..      +..  : /etc/crypto-policies/back-ends/krb5.config
+f   p..      +..  : /etc/crypto-policies/back-ends/libreswan.config
+f   p..      +..  : /etc/crypto-policies/back-ends/libssh.config
+f   p..      +..  : /etc/crypto-policies/back-ends/openssh.config
+f   p..      +..  : /etc/crypto-policies/back-ends/opensshserver.config
+f   p..      +..  : /etc/crypto-policies/back-ends/openssl.config
+f   p..      +..  : /etc/crypto-policies/back-ends/openssl_fips.config
+f   p..      +..  : /etc/crypto-policies/back-ends/opensslcnf.config
+f   p..      +..  : /etc/crypto-policies/back-ends/rpm-sequoia.config
+f   ...      .XS  : /etc/crypto-policies/config
+f > ...   ..H.... : /etc/fstab
+f > ...   i.H.... : /etc/group
+f > ...   i.H.... : /etc/gshadow
+f < ...   i.H.... : /etc/hostname
+f < ...   ..H.... : /etc/hosts
+f > ...   i.H.... : /etc/ld.so.cache
+f = ...   ..H.... : /etc/machine-id
+f > ...   i.H.... : /etc/passwd
+f > ...   i.H.... : /etc/shadow
+f = ...   ..H.... : /etc/sysconfig/network-scripts/ifcfg-eth0
+f > ...   ..H.... : /etc/sysctl.conf
+d > ...   .. .... : /etc/sysctl.d
+d > ...   .. .... : /etc/systemd/journald.conf.d
+f = ...   ..H.... : /etc/udev/rules.d/70-persistent-net.rules
+f = p..   ...A... : /usr/lib/tmpfiles.d/systemd.conf
+d = ...   .n .... : /usr/share/doc
+d = ...   .n .... : /usr/share/licenses
+d > ...   .n .... : /usr/share/systemd
+f   p..    .  ..  : /var/log/boot.log
+f   p..    .  ..  : /var/log/cron
+f   p..    .  ..  : /var/log/dnf.librepo.log
+f   p..    .  ..  : /var/log/dnf.log
+f   p..    .  ..  : /var/log/dnf.rpm.log
+f   p..    .  ..  : /var/log/hawkey.log
