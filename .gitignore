@@ -8,6 +8,9 @@ ansible/roles/*
 !ansible/roles/.gitkeep
 .env
 tfplan
+# plan JSON can hold sensitive values - never commit it
+plan.json
+*.tfplan.json
 *.log.tmp
 # internal KRONOS change logs live on the Proxmox host
 kronos/changelog-*
