@@ -50,7 +50,7 @@
       ansible.builtin.assert:
         that: "'NOPASSWD' in admin_sudo.stdout"
 
-    # ---- Image 1.0.1 remediation checks (issues #1 #2 #3 #4 #6 #7) ----
+    # ---- Image 1.0.1 and 1.0.2 remediation checks (issues #1-#4, #6, #7, #14, #17) ----
     # Remediation checks for the Rocky image (issues 1-7). They test the RHEL9-CIS role's
     # implementation (custom authselect profile, systemd AIDE timer, /usr/sbin audit tools);
     # the AL2023 role does these differently, so they only run on Rocky.
@@ -122,6 +122,35 @@
               - aide_timer.status.ActiveState == 'active'
               - ansible_facts.services['aidecheck.service'].status == 'enabled'
             fail_msg: "aidecheck.timer/service not enabled and active"
+
+        # Issue #17: the build only proves the AIDE units are wired up. The
+        # baseline itself is made per instance on first boot, so it is checked
+        # after deploy by ansible/verify-deployed.yml (this gate runs before
+        # the Packer cleanup step deletes the build-time database).
+        - name: AIDE timer and first-boot baseline unit enabled (issue 17)
+          ansible.builtin.assert:
+            that:
+              - aide_timer.status.UnitFileState == 'enabled'
+              - ansible_facts.services['aide-firstboot.service'].status == 'enabled'
+            fail_msg: "aidecheck.timer or aide-firstboot.service is not enabled"
+
+        - name: Read installed kernel packages
+          ansible.builtin.command:
+            argv: [rpm, -q, kernel, --qf, "%{VERSION}-%{RELEASE}.%{ARCH}\n"]
+          register: kernel_pkgs
+          changed_when: false
+
+        - name: Read running kernel
+          ansible.builtin.command: uname -r
+          register: running_kernel
+          changed_when: false
+
+        - name: Exactly one kernel installed and it is the running one (issue 14)
+          ansible.builtin.assert:
+            that:
+              - kernel_pkgs.stdout_lines | length == 1
+              - kernel_pkgs.stdout_lines[0] == running_kernel.stdout
+            fail_msg: "Installed kernels {{ kernel_pkgs.stdout_lines }}, running {{ running_kernel.stdout }}"
 
         - name: Read AIDE rules for audit tools
           ansible.builtin.command: >-

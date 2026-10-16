@@ -1,0 +1,3 @@
+WARN - /tmp/plan-102.json - main - proxmox_virtual_environment_vm.app: plan will REPLACE (destroy and recreate) this resource - check the plan before approving apply
+
+10 tests, 9 passed, 1 warning, 0 failures, 0 exceptions

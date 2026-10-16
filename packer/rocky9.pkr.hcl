@@ -63,6 +63,32 @@ build {
     inline = ["sudo dnf -y install python3 && sudo dnf -y update"]
   }
 
+  # Issue #14: dnf installs kernels side by side, so the old kernel RPM stays
+  # installed and the vulnerability scanner reports its CVEs on a patched host.
+  # Reboot into the newest kernel, then remove every older installonly package.
+  provisioner "shell" {
+    inline            = ["echo 'Rebooting into the updated kernel'", "sudo systemctl reboot"]
+    expect_disconnect = true
+  }
+
+  # pause_before gives the VM time to go down before Packer reconnects.
+  # `dnf remove --oldinstallonly` removes every installonly package except the
+  # newest (and never the running kernel), but exits 1 when there is nothing
+  # to remove, so it only runs when repoquery finds an old package.
+  provisioner "shell" {
+    pause_before = "45s"
+    inline = [
+      "set -eu",
+      "RUNNING=$(uname -r)",
+      "NEWEST=$(rpm -q kernel --qf '%%{VERSION}-%%{RELEASE}.%%{ARCH}\\n' | sort -V | tail -n 1)",
+      "echo \"Running kernel: $RUNNING, newest installed: $NEWEST\"",
+      "if [ \"$RUNNING\" != \"$NEWEST\" ]; then echo 'Not running the newest kernel - refusing to remove kernels'; exit 1; fi",
+      "OLD=$(dnf repoquery --installonly --latest-limit=-1 -q)",
+      "if [ -n \"$OLD\" ]; then echo \"Removing: $OLD\"; sudo dnf -y remove --oldinstallonly; else echo 'No old kernels to remove'; fi",
+      "rpm -q kernel"
+    ]
+  }
+
   provisioner "ansible" {
     playbook_file    = var.playbook_file_path
     user             = var.ssh_username
@@ -84,6 +110,10 @@ build {
   provisioner "shell" {
     inline = [
       "sudo cloud-init clean --logs",
+      # Issue #17: never ship an AIDE baseline. aide-firstboot.service builds
+      # one per instance after cloud-init finishes. This runs last, after the
+      # kernel reboot and the verify gate, so nothing changes after it.
+      "sudo rm -f /var/lib/aide/aide.db.gz /var/lib/aide/aide.db.new.gz",
       "sudo truncate -s 0 /etc/machine-id",
       "rm -f ~/.ssh/authorized_keys",
       "sudo rm -f /root/.ssh/authorized_keys"

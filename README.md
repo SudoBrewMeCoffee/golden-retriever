@@ -23,6 +23,7 @@ instance refresh vs Patch Manager. Every AWS/Terraform claim is sourced to prima
 
 **3. CIS hardening and patching.** Guardrails and their reasons: [`ansible/group_vars/all/cis.yml`](ansible/group_vars/all/cis.yml).
 Real-VM verify gate that fails the build if controls aren't in effect: [`ansible/verify-vm.yml`](ansible/verify-vm.yml).
+Post-deploy check that proves each instance (runs `aide --check`, one kernel installed): [`ansible/verify-deployed.yml`](ansible/verify-deployed.yml).
 Owned, justified deviations: [`evidence/deviations.md`](evidence/deviations.md). Patching: [`evidence/07-patching.md`](evidence/07-patching.md).
 
 **4. Terraform with security built in.** Gates: [`.pre-commit-config.yaml`](.pre-commit-config.yaml) (fmt, validate, docs,

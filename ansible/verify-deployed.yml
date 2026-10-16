@@ -1,0 +1,105 @@
+---
+# Post-deploy checks against a VM cloned from the image (not the Packer build VM).
+# verify-vm.yml is the build gate and proves the image; this playbook proves the
+# instance. It exists because the 1.0.1 build gate passed while every deployed
+# VM failed its first AIDE check (issue 17), and that gate only read unit state.
+# Run it right after first boot, before installing anything else (for example
+# the Wazuh agent): any later package install is a real change that AIDE reports.
+#   ansible-playbook -i <ip>, -u rocky ansible/verify-deployed.yml
+- name: Verify a deployed instance
+  hosts: all
+  become: true
+  gather_facts: true
+  vars:
+    expected_version: "1.0.2"
+  tasks:
+    - name: Rocky image post-deploy checks
+      when: ansible_facts['distribution'] == 'Rocky'
+      block:
+        - name: Read first-boot baseline unit state
+          ansible.builtin.systemd:
+            name: aide-firstboot.service
+          register: aide_firstboot
+
+        - name: Read first-boot baseline unit journal
+          ansible.builtin.command: journalctl -u aide-firstboot.service --no-pager -o cat
+          register: aide_firstboot_log
+          changed_when: false
+
+        - name: First-boot AIDE baseline ran and succeeded (issue 17)
+          ansible.builtin.assert:
+            that:
+              - aide_firstboot.status.UnitFileState == 'enabled'
+              - aide_firstboot.status.Result == 'success'
+              - "'Finished' in aide_firstboot_log.stdout"
+            fail_msg: "aide-firstboot.service did not complete: {{ aide_firstboot_log.stdout_lines[-5:] }}"
+
+        - name: Read AIDE database
+          ansible.builtin.stat:
+            path: /var/lib/aide/aide.db.gz
+          register: aide_db
+
+        - name: Per-instance AIDE database exists (issue 17)
+          ansible.builtin.assert:
+            that: aide_db.stat.exists
+            fail_msg: "/var/lib/aide/aide.db.gz is missing"
+
+        # Run the check itself, not just read unit state (the 1.0.1 gap).
+        - name: Run AIDE integrity check
+          ansible.builtin.command: /usr/sbin/aide --check
+          register: aide_check
+          changed_when: false
+          failed_when: false
+
+        - name: AIDE check finds no differences (rc 0)
+          ansible.builtin.assert:
+            that: aide_check.rc == 0
+            fail_msg: "aide --check returned {{ aide_check.rc }}: {{ aide_check.stdout_lines[:40] }}"
+
+        - name: Read scheduled AIDE check unit state
+          ansible.builtin.systemd:
+            name: aidecheck.service
+          register: aidecheck
+
+        - name: Scheduled AIDE check is not failed and its timer is enabled (CIS RHEL9 6.1.2)
+          ansible.builtin.assert:
+            that:
+              - aidecheck.status.ActiveState != 'failed'
+              - aidecheck.status.Result == 'success'
+              - aidecheck.status.UnitFileState == 'enabled'
+            fail_msg: "aidecheck.service is {{ aidecheck.status.ActiveState }} ({{ aidecheck.status.Result }})"
+
+        - name: Read installed kernel packages
+          ansible.builtin.command:
+            argv: [rpm, -q, kernel, --qf, "%{VERSION}-%{RELEASE}.%{ARCH}\n"]
+          register: kernel_pkgs
+          changed_when: false
+
+        - name: Read running kernel
+          ansible.builtin.command: uname -r
+          register: running_kernel
+          changed_when: false
+
+        - name: Exactly one kernel installed and it is the running one (issue 14)
+          ansible.builtin.assert:
+            that:
+              - kernel_pkgs.stdout_lines | length == 1
+              - kernel_pkgs.stdout_lines[0] == running_kernel.stdout
+            fail_msg: "Installed kernels {{ kernel_pkgs.stdout_lines }}, running {{ running_kernel.stdout }}"
+
+        - name: Read release stamp
+          ansible.builtin.slurp:
+            src: /etc/ch-mirror-release
+          register: release_stamp
+
+        - name: Instance was built from the expected image version
+          ansible.builtin.assert:
+            that: (release_stamp.content | b64decode | trim) == ('ch-rocky9-base ' ~ expected_version)
+            fail_msg: "Release stamp is '{{ release_stamp.content | b64decode | trim }}'"
+
+        - name: Show results
+          ansible.builtin.debug:
+            msg:
+              - "{{ release_stamp.content | b64decode | trim }}"
+              - "Kernel {{ running_kernel.stdout }} (installed: {{ kernel_pkgs.stdout_lines | length }})"
+              - "aide --check rc {{ aide_check.rc }}"
