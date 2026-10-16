@@ -1,0 +1,23 @@
+proxmox_virtual_environment_vm.app: Destroying... [id=301]
+proxmox_virtual_environment_vm.app: Destruction complete after 4s
+proxmox_virtual_environment_vm.app: Creating...
+proxmox_virtual_environment_vm.app: Still creating... [00m10s elapsed]
+proxmox_virtual_environment_vm.app: Creation complete after 13s [id=301]
+╷
+│ Warning: error waiting for network interfaces from QEMU agent
+│ 
+│   with proxmox_virtual_environment_vm.app,
+│   on main.tf line 1, in resource "proxmox_virtual_environment_vm" "app":
+│    1: resource "proxmox_virtual_environment_vm" "app" {
+│ 
+│ error waiting for VM network interfaces: error retrieving VM network
+│ interfaces from agent: received an HTTP 403 response - Reason: Permission
+│ check failed (/vms/301, VM.GuestAgent.Audit|VM.GuestAgent.Unrestricted)
+╵
+
+Apply complete! Resources: 1 added, 0 changed, 1 destroyed.
+
+Outputs:
+
+ipv4 = "10.69.1.72/24"
+vm_id = 301
