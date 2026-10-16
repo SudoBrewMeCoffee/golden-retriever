@@ -4,9 +4,13 @@ roles:
     src: https://github.com/ansible-lockdown/RHEL9-CIS
     scm: git
     version: 2.4.2   # pinned release; guardrail var names verified against this tag
+  - name: AMAZON2023-CIS
+    src: https://github.com/ansible-lockdown/AMAZON2023-CIS
+    scm: git
+    version: 1.5.0   # pinned release (CIS Amazon Linux 2023 v1.0.0); used only by playbook-al2023.yml
 
 collections:
-  # Needed by RHEL9-CIS 2.4.2 (see its collections/requirements.yml)
+  # Needed by RHEL9-CIS 2.4.2 and AMAZON2023-CIS 1.5.0 (see their collections/requirements.yml)
   - name: community.general
   - name: community.crypto
   - name: ansible.posix

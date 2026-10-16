@@ -4,24 +4,28 @@
 # (vars/is_container.yml), including SSH, firewall, SELinux and mounts
 # (what-broke #12). Any failure here fails the Packer build, so an image that
 # doesn't actually enforce the controls is never published.
+# Used by both images: admin_user is rocky (Rocky 9) or ec2-user (Amazon Linux 2023,
+# passed by packer/al2023 as an extra var).
 - name: Verify CIS controls on a real VM
   hosts: all
   become: true
   gather_facts: true
+  vars:
+    admin_user: rocky
   tasks:
     - name: Read effective sshd config
       ansible.builtin.command: sshd -T
       register: sshd
       changed_when: false
 
-    - name: Root SSH login disabled (CIS RHEL9 5.1.20)
+    - name: Root SSH login disabled (CIS RHEL9 5.1.20, AL2023 4.2.x)
       ansible.builtin.assert:
         that: "'permitrootlogin no' in sshd.stdout"
         fail_msg: "PermitRootLogin is not 'no' in the effective sshd config"
 
-    - name: SSH access limited to the admin account (CIS RHEL9 5.1.7 - the headline finding)
+    - name: SSH access limited to the admin account (CIS RHEL9 5.1.7, AL2023 4.2.4 - the headline finding)
       ansible.builtin.assert:
-        that: "'allowusers rocky' in sshd.stdout"
+        that: "('allowusers ' ~ admin_user) in sshd.stdout"
         fail_msg: "AllowUsers not in effect - SSH access is not limited"
 
     - name: SELinux enforcing
@@ -38,13 +42,13 @@
           - ansible_facts.services['firewalld.service'].state == 'running'
 
     - name: Admin account can still escalate (deviation D2 - no lockout)
-      ansible.builtin.command: sudo -n -l -U rocky
-      register: rocky_sudo
+      ansible.builtin.command: sudo -n -l -U {{ admin_user }}
+      register: admin_sudo
       changed_when: false
 
-    - name: Assert rocky kept NOPASSWD sudo
+    - name: Assert admin account kept NOPASSWD sudo
       ansible.builtin.assert:
-        that: "'NOPASSWD' in rocky_sudo.stdout"
+        that: "'NOPASSWD' in admin_sudo.stdout"
 
     - name: Release stamp present
       ansible.builtin.command: cat /etc/ch-mirror-release

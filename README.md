@@ -88,6 +88,25 @@ packer/build.sh 1.0.0      # reads the token from ~/.config/ch-mirror/pve-token;
 ```
 Produces template **9201 `ch-rocky9-base-1.0.0`**. Bump `version` on every rebuild (CH style).
 
+### Amazon Linux 2023 (CH also build `amzn2023-base-ami`)
+
+Same pattern, second image. Source is AWS's official AL2023 KVM image
+(`cdn.amazonlinux.com/al2023/os-images/latest/kvm/`, SHA256 checked against the published `SHA256SUMS`),
+imported as base template **9210 `al2023-kvm-base`** exactly like 9200 but with `--ciuser ec2-user`
+(the image's default user; the Proxmox cloud-init drive is the NoCloud seed AWS document) and a static `ipconfig0`.
+
+```bash
+packer/al2023/build.sh 1.0.0   # log -> evidence/03-packer-build-al2023-1.0.0.log
+```
+Produces **9211 `al2023-cis-base-1.0.0`**: ansible-lockdown AMAZON2023-CIS 1.5.0 (CIS AL2023 v1.0.0) via
+`ansible/playbook-al2023.yml` + `ansible/vars/al2023-cis.yml`, then the same `verify-vm.yml` gate as `ec2-user`.
+Level 1 is selected with `--tags level1-server` - that role ignores its level variables (what-broke #16) - plus
+the host firewall controls, which CIS AL2023 puts in Level 2 (what-broke #18).
+Deviations: `evidence/deviations-al2023.md`. Lives in its own directory, so `packer/build.sh` still builds RHEL only.
+Result (1.0.0): hardening 316 ok / 0 failed, verify gate 11/11 (`evidence/03-packer-build-al2023-1.0.0.log`);
+Wazuh SCA (CIS Amazon Linux 2023 v1.0.0) on a throwaway clone: **65%**, 117 pass / 63 fail
+(`evidence/09-sca-al2023-summary.json`) - most fails are the single-partition image layout and Level 2 audit rules.
+
 ## 5. Test the role (Molecule, on the Mac Studio)
 
 ```bash

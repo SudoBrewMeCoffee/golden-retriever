@@ -1,0 +1,14 @@
+{
+  "builds": [
+    {
+      "name": "al2023",
+      "builder_type": "proxmox-clone",
+      "build_time": 1792174279,
+      "files": null,
+      "artifact_id": "9211",
+      "packer_run_uuid": "1df9ef11-edae-57b7-d994-de91a7f8cdb4",
+      "custom_data": null
+    }
+  ],
+  "last_run_uuid": "1df9ef11-edae-57b7-d994-de91a7f8cdb4"
+}
