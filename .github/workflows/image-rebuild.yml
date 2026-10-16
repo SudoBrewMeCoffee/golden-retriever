@@ -33,13 +33,22 @@ jobs:
   build:
     runs-on: [self-hosted, mac-studio]
     environment: kronos-prod   # a new image needs Graham's approval, scheduled or not
-    env:
-      PKR_VAR_proxmox_username: ${{ secrets.PROXMOX_TOKEN_ID }}
-      PKR_VAR_proxmox_token: ${{ secrets.PROXMOX_TOKEN_SECRET }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0       # need tags to work out the next version
+
+      # Credentials stay on the runner host, not in GitHub (see ci.yml). Loaded into this
+      # job's environment only; GitHub masks the secret part in the log.
+      - name: Load Proxmox token from the runner host
+        shell: bash
+        run: |
+          T="$(cat ~/.config/ch-mirror/pve-token)"
+          echo "::add-mask::${T#*=}"
+          {
+            echo "PKR_VAR_proxmox_username=${T%%=*}"
+            echo "PKR_VAR_proxmox_token=${T#*=}"
+          } >> "$GITHUB_ENV"
 
       - name: Work out version and template ID
         id: v

@@ -23,7 +23,7 @@ Proof-live check for 301: `ssh rocky@10.69.1.72 cat /etc/ch-mirror-release` retu
 - **Wazuh (CT 130, 10.69.1.131, v4.14.8):** enrol with `kronos/wazuh-enrol.sh <name>`. It pins the agent to the manager's version and disables the repo afterwards so agents can't overtake the manager. SCA picks *CIS Rocky Linux 9 v1.0.0* automatically.
 - **Read SCA results (read-only):** `pct exec 130 -- python3 /usr/local/bin/chm-sca.py <agent-id> summary|checks`.
 - **Vulnerabilities:** there is no separate KEV watch on the estate (draft assumed one). Wazuh vulnerability detection is enabled (feed refresh 60 min) and covers 301's Rocky packages - that is the watch. Gap to raise: no CISA KEV cross-check yet.
-- **Backups:** 301 is deliberately NOT in `t4-proxmox-backup.sh` - it is rebuilt from the image, not restored. What must be kept: the git repo and `terraform/terraform.tfstate` on Magnus.
+- **Backups:** 301 is deliberately NOT in `t4-proxmox-backup.sh` - it is rebuilt from the image, not restored. What must be kept: the git repo and the Terraform state at `~/ch-mirror-state/terraform.tfstate` on Magnus (local backend, outside the repo - see `terraform/versions.tf`).
 
 ## 3. Automation that will NOT touch ch-mirror (checked)
 container-orchestrator (containers in its config only), kronos-healer (containers with onboot only), self-healing-watchdog (named services only), nightly backup (VMs 101/200/246/248 only).

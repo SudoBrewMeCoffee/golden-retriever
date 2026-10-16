@@ -50,14 +50,18 @@ fix and the control added so it can't recur.
 
 | Piece | State | Evidence |
 |---|---|---|
-| Base template 9200 `rocky9-cloud-base` | Built (Rocky 9.8 GenericCloud, sha256 verified) | `/root/ch-mirror-logs/9200.log` on pve |
-| Hardened template 9201 `ch-rocky9-base-1.0.0` | Built by Packer: CIS RHEL 9 L1 (414 tasks, 0 failed) + real-VM verify gate 11/11 | `evidence/03-packer-build-1.0.0.log` |
-| VM 301 `ch-app-01` (10.69.1.72) | Deployed by Terraform from 9201; verify 11/11; Wazuh agent 041 | `evidence/05-plan.log`, `05-apply.log`, `06-verify-vm-301.log` |
-| CIS score (Wazuh, CIS Rocky 9 v1.0.0) | **53% -> 73%**; headline control *SSH access limited* FAIL -> PASS | `evidence/finding.md`, `06-sca-after-analysis.md` |
-| Molecule | Green (converge, idempotence, verify) | `evidence/04-molecule.log` |
-| pre-commit | 9/9 gates pass (ansible-lint production profile) | `evidence/02-precommit.log` |
-| What broke | 15 real incidents, each with root cause + control | `evidence/what-broke.md` |
-| GitHub PR pipeline | Workflow written; self-hosted runner (and its secrets) pending - gates so far run locally with the same commands | `.github/workflows/ci.yml` |
+| Base templates 9200 `rocky9-cloud-base`, 9210 `al2023-kvm-base` | Stock cloud images, checksum-verified; never deployed directly (policy denies it) | `/root/ch-mirror-logs/` on pve, `policy/terraform/` |
+| Rocky image 1.0.0 (template 9201) | CIS RHEL 9 L1 (414 tasks, 0 failed) + real-VM verify gate 11/11 | `evidence/03-packer-build-1.0.0.log` |
+| Rocky image 1.0.1 (template 9202) | Remediation of 8 scanner findings; verify gate 28/28 | PR #15 |
+| AL2023 image 1.0.0 (template 9211) | AMAZON2023-CIS 1.5.0 + verify gate 11/11; Wazuh CIS Amazon Linux 2023: 65% (117 pass / 63 fail) | `packer/al2023/`, `evidence/03-packer-build-al2023-1.0.0.log`, `09-sca-al2023-summary.json` |
+| VM 301 `ch-app-01` (10.69.1.72) | Replaced via reviewed plan with 1.0.1 | `evidence/10-deploy-1.0.1.md` (PR #15) |
+| CIS score (Wazuh, CIS Rocky 9 v1.0.0) | **53% upstream -> 73% (1.0.0) -> 76% (1.0.1)**, 0 regressions | `evidence/finding.md`, `06-sca-after-analysis.md`, `10-deploy-1.0.1.md` |
+| Patching | Upstream image: 100 security advisories, 542 CVEs -> patched image: 0 advisories; old-kernel finding tracked in #14 | `evidence/07-patching.md` |
+| Policy as code | conftest/OPA on every plan: ID range, hardened template (raw bases denied), static IP, replacement warning; 23 unit tests | `policy/terraform/` |
+| Hosted checks (GitHub-hosted) | pre-commit, Terraform/Packer validate, Molecule on every push and PR | `.github/workflows/hosted-checks.yml` |
+| Deploy pipeline (self-hosted) | Plan -> policy -> human approval (`kronos-prod`) -> apply saved plan; runner being registered | `.github/workflows/ci.yml` |
+| Scheduled image rebuild | Patch-bump rebuild, refuses to reuse a version | `.github/workflows/image-rebuild.yml` |
+| What broke | Real incidents, each with root cause + control | `evidence/what-broke.md` |
 
 Toolchain lives on **Magnus** (Mac Studio). Build: `packer/build.sh <semver>`. Deploy: `terraform/tf.sh plan` then `tf.sh apply` (applies only the saved, reviewed plan). Run both in a held-open session (what-broke #13).
 
