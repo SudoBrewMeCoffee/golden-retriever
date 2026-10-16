@@ -1,0 +1,43 @@
+---
+# Guardrails for ansible-lockdown/AMAZON2023-CIS, verified against release 1.5.0
+# (defaults/main/main.yml and the pre-flight asserts in tasks/main.yml + tasks/prelim.yml).
+# Loaded only by playbook-al2023.yml, so the RHEL 9 build is unaffected.
+# Deviations: evidence/deviations-al2023.md.
+
+# Level 1 only. NOTE: in this role these two flags do NOT select which controls
+# run - no task reads them (they only feed the audit/facts file). Level is chosen
+# with tags: the Packer build runs the role with `--tags level1-server,...` (what-broke #16).
+amzn2023cis_level_1: true
+amzn2023cis_level_2: false
+
+# Keep SELinux on; L1 1.6.1.4 sets the mode from this var (AL2023 ships permissive)
+amzn2023cis_selinux_disable: false
+amzn2023cis_selinux_enforce: enforcing
+
+# 4.2.4 SSH access restricted to the build/admin account. The role default derives
+# the user from the connecting account; set it explicitly so it can't drift.
+amzn2023cis_sshd_allowusers: "ec2-user"
+amzn2023cis_sshd_allowgroups: ""
+
+# 4.6.6 "Ensure root password is set" - DEVIATION AL-D2. The role asserts this in its
+# pre-flight (tasks/main.yml) and stops; the AL2023 KVM image ships root locked with no
+# password, and putting a root password into a template would be a shared secret.
+amzn2023cis_rule_4_6_6: false
+
+# Escalation: unlike RHEL9-CIS (what-broke #2/#9), this role has no task for the
+# benchmark's "users must provide password for escalation" control - its 4.3.4 only
+# removes `!authenticate`. So ec2-user's cloud-init NOPASSWD sudo survives (the verify
+# gate asserts it) and Wazuh reports that control FAIL - DEVIATION AL-D3.
+
+# Authselect: the role asserts the profile name is not its example. Use a site name;
+# create/select stay off (role default) so PAM is not rewritten in an unattended build.
+amzn2023cis_authselect:
+  custom_profile_name: ch_mirror_cis
+  default_profile_to_copy: sssd --symlink-meta
+  options: with-sudo with-faillock without-nullok
+
+# Host firewall: all of CIS AL2023 3.4 is Level 2 (AWS assumes security groups). On
+# Proxmox there is no security group, so the build also runs 3.4.1.2 + 3.4.2.1 by tag
+# (what-broke #18) - firewalld on, default zone public (permits ssh).
+amzn2023cis_firewall: firewalld
+amzn2023cis_default_zone: public
