@@ -1,0 +1,47 @@
+{
+ "041": {
+  "vm": "301 ch-app-01 (ch-rocky9-base-1.0.0)",
+  "findings_rows": 1344,
+  "unique_cves": 336,
+  "by_severity_unique_cve": {
+   "High": 299,
+   "Medium": 36,
+   "Low": 1
+  },
+  "rows_by_severity": {
+   "High": 1196,
+   "Medium": 144,
+   "Low": 4
+  },
+  "unique_cves_kernel_pkgs": 336,
+  "unique_cves_non_kernel": 0,
+  "non_kernel_by_severity": {},
+  "packages_affected": 4
+ },
+ "042": {
+  "vm": "302 ch-patch-baseline (upstream 9200)",
+  "findings_rows": 2401,
+  "unique_cves": 542,
+  "by_severity_unique_cve": {
+   "High": 397,
+   "Medium": 133,
+   "Low": 9,
+   "Critical": 3
+  },
+  "rows_by_severity": {
+   "High": 1956,
+   "Medium": 420,
+   "Low": 21,
+   "Critical": 4
+  },
+  "unique_cves_kernel_pkgs": 336,
+  "unique_cves_non_kernel": 206,
+  "non_kernel_by_severity": {
+   "High": 98,
+   "Medium": 97,
+   "Low": 8,
+   "Critical": 3
+  },
+  "packages_affected": 94
+ }
+}

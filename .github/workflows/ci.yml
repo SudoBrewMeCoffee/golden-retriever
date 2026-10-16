@@ -7,11 +7,7 @@ on:
   pull_request:
   push:
     branches: [main]
-  workflow_dispatch:
-    inputs:
-      image_version:
-        description: "Build a new hardened image (semver, e.g. 1.0.1). Leave empty to skip."
-        required: false
+  workflow_dispatch:   # image builds (monthly + on demand) live in image-rebuild.yml
 
 env:
   # Docker Desktop's credential helper and the Python 3.13 tool venvs (what-broke #5, #6)
@@ -31,30 +27,6 @@ jobs:
         if: always()
         with:
           name: checks-evidence
-          path: ${{ runner.temp }}/*.log
-
-  image:
-    if: github.event_name == 'workflow_dispatch' && inputs.image_version != ''
-    needs: checks
-    runs-on: [self-hosted, mac-studio]
-    environment: kronos-prod          # building a new image also needs Graham's approval
-    env:
-      PKR_VAR_proxmox_username: ${{ secrets.PROXMOX_TOKEN_ID }}
-      PKR_VAR_proxmox_token: ${{ secrets.PROXMOX_TOKEN_SECRET }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install pinned role + collections
-        working-directory: ansible
-        run: ansible-galaxy install -r requirements.yml -p roles && ansible-galaxy collection install -r requirements.yml
-      - name: Packer build (hardening + real-VM verify gate)
-        working-directory: packer
-        run: |
-          packer init .
-          packer build -color=false -var-file=example.pkrvars.hcl -var version=${{ inputs.image_version }} . 2>&1 | tee "$RUNNER_TEMP/03-packer-build.log"
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: image-evidence
           path: ${{ runner.temp }}/*.log
 
   plan:
