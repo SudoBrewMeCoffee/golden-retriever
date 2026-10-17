@@ -1,0 +1,27 @@
+##[group]Run plan="$HOME/ch-mirror-state/plans/38998590074.tfplan"
+plan="$HOME/ch-mirror-state/plans/38998590074.tfplan"
+mv "$plan" terraform/tfplan
+terraform/tf.sh apply 2>&1 | tee "$RUNNER_TEMP/05-apply.log"
+rm -f terraform/tfplan
+shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+env:
+  PATH: /Applications/Docker.app/Contents/Resources/bin:/Users/graham/.local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin
+##[endgroup]
+proxmox_virtual_environment_vm.app: Destroying... [id=301]
+proxmox_virtual_environment_vm.app: Destruction complete after 5s
+proxmox_virtual_environment_vm.app: Creating...
+proxmox_virtual_environment_vm.app: Still creating... [00m10s elapsed]
+proxmox_virtual_environment_vm.app: Creation complete after 11s [id=301]
+╷
+│ Warning: error waiting for network interfaces from QEMU agent
+│ 
+│   with proxmox_virtual_environment_vm.app,
+│   on main.tf line 1, in resource "proxmox_virtual_environment_vm" "app":
+│    1: resource "proxmox_virtual_environment_vm" "app" {
+│ 
+│ error waiting for VM network interfaces: error retrieving VM network
+│ interfaces from agent: received an HTTP 403 response - Reason: Permission
+│ check failed (/vms/301, VM.GuestAgent.Audit|VM.GuestAgent.Unrestricted)
+╵
+
+Apply complete! Resources: 1 added, 0 changed, 1 destroyed.
