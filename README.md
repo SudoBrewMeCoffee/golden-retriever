@@ -42,7 +42,7 @@ fix and the control added so it can't recur.
 | KMS-encrypted EBS, `ssh_clear_authorized_keys` | authorized_keys, machine-id and cloud-init state cleared post-build (no storage-encryption claim in the lab - see `docs/aws-at-scale.md`) |
 | `ansible-collection-*` tested with **Molecule** | `ansible/molecule/default` (Docker driver on the Mac Studio) |
 | `*-terraform` repos, pre-commit: fmt, docs, tfsec, tflint | `terraform/` + `.pre-commit-config.yaml` (tfsec → Trivy) |
-| CI Packer container, Terraform runner | GitHub Actions workflow targeting a self-hosted runner on the Mac Studio (runner pending) |
+| CI Packer container, Terraform runner | GitHub Actions workflow targeting a self-hosted runner on the Mac Studio, installed as a launchd daemon (`kronos/runner-daemon.sh`, what-broke #23) |
 
 **Not in scope:** Kubernetes. CH run EC2/AMI, not K8s. Park the K8s cluster if it's using RAM.
 
@@ -60,7 +60,7 @@ fix and the control added so it can't recur.
 | Patching | Upstream image: 100 security advisories, 542 CVEs -> patched image: 0 advisories; old-kernel finding fixed in image 1.0.2 (#14) | `evidence/07-patching.md` |
 | Policy as code | conftest/OPA on every plan: ID range, hardened template (raw bases denied), static IP, replacement warning; 23 unit tests | `policy/terraform/` |
 | Hosted checks (GitHub-hosted) | pre-commit, Terraform/Packer validate, Molecule on every push and PR | `.github/workflows/hosted-checks.yml` |
-| Deploy pipeline (self-hosted) | Plan -> policy -> human approval (`kronos-prod`) -> apply saved plan; runner being registered | `.github/workflows/ci.yml` |
+| Deploy pipeline (self-hosted) | Plan -> policy -> human approval (`kronos-prod`) -> apply saved plan; runner live as a launchd daemon on the Mac Studio | `.github/workflows/ci.yml` |
 | Scheduled image rebuild | Patch-bump rebuild, refuses to reuse a version | `.github/workflows/image-rebuild.yml` |
 | What broke | Real incidents, each with root cause + control | `evidence/what-broke.md` |
 
