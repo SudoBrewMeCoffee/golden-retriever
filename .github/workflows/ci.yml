@@ -41,6 +41,8 @@ jobs:
   plan:
     needs: checks
     runs-on: [self-hosted, mac-studio]
+    outputs:
+      changes: ${{ steps.changes.outputs.changes }}
     steps:
       - uses: actions/checkout@v4
       - name: terraform plan
@@ -49,11 +51,26 @@ jobs:
       - name: policy check (conftest - a deny fails the job before anyone can approve apply)
         shell: bash   # -eo pipefail, so a deny is not hidden by tee
         run: scripts/policy-check.sh terraform 2>&1 | tee "$RUNNER_TEMP/08-policy.log"
+      - name: Does the plan change anything?
+        id: changes
+        shell: bash
+        # Only "Plan: N to add/change/destroy" means work; "No changes." means nothing to approve.
+        run: |
+          if grep -q '^No changes\.' "$RUNNER_TEMP/05-plan.log"; then
+            echo "changes=false" >> "$GITHUB_OUTPUT"
+            echo "No infrastructure changes - apply (and its approval request) will be skipped."
+          else
+            echo "changes=true" >> "$GITHUB_OUTPUT"
+          fi
       - name: Keep the reviewed plan on the runner host (never uploaded)
         shell: bash
         run: |
-          install -d -m 700 "$HOME/ch-mirror-state/plans"
-          mv terraform/tfplan "$HOME/ch-mirror-state/plans/${{ github.run_id }}.tfplan"
+          if [ "${{ steps.changes.outputs.changes }}" = "true" ]; then
+            install -d -m 700 "$HOME/ch-mirror-state/plans"
+            mv terraform/tfplan "$HOME/ch-mirror-state/plans/${{ github.run_id }}.tfplan"
+          else
+            rm -f terraform/tfplan
+          fi
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -63,7 +80,8 @@ jobs:
             ${{ runner.temp }}/08-policy.log
 
   apply:
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    # Skipped when the plan has no changes, so the owner is only asked to approve real changes.
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push' && needs.plan.outputs.changes == 'true'
     needs: plan
     runs-on: [self-hosted, mac-studio]
     environment: kronos-prod          # required reviewer = Graham (manual approval gate)
