@@ -1,5 +1,6 @@
 ---
 # Lint our code only; vendored roles (ansible/roles/, git-ignored) are pinned upstream code.
+# Config for ansible-lint in the golden-image pipeline.
 exclude_paths:
   - ansible/roles/
   - .cache/

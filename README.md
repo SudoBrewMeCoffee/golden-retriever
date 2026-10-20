@@ -1,4 +1,4 @@
-# ch-mirror — public-sector-style golden-image pipeline on KRONOS
+# golden-retriever — public-sector-style golden-image pipeline on KRONOS
 
 **Purpose:** a working, demonstrable copy of a UK public-sector reference pipeline's published infrastructure
 pattern (Packer + Ansible CIS images, Molecule, Terraform, pre-commit gates) running on my
