@@ -89,6 +89,13 @@
   roles:
     - role: RHEL9-CIS
   post_tasks:
+    - name: Install AIDE EFI SELinux metadata policy on real Rocky hosts
+      ansible.builtin.include_tasks: tasks/aide-efi-policy.yml
+      when:
+        - ansible_facts['distribution'] == 'Rocky'
+        - ansible_facts['selinux']['status'] == 'enabled'
+      tags: selinux
+
     - name: Stamp image version (traceability for auditors)
       ansible.builtin.copy:
         dest: /etc/ch-mirror-release
