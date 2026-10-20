@@ -60,3 +60,21 @@ PR preparation validation on 20 October 2026:
 To remove the local policy on an instance, use
 `sudo semodule -r aide_efi_metadata`. This restores the previous metadata denial
 and warnings; it does not change the AIDE database.
+
+## Security review follow-up
+
+The grants apply to filesystems labelled `dosfs_t` and `autofs_t`, not just
+two pathnames. They permit filesystem metadata queries only; no file-content
+read, write, mount, relabel or unconfined-domain permission is added.
+
+Global `Enforcing` alone does not prove that `aide_t` is enforcing. Instance
+verification now reads the effective `semanage permissive -l` list before and
+after the scheduled run, rejects `aide_t` in either list, and fails closed if
+the query fails. The image installs the package providing `semanage`.
+
+The image module gate now rejects disabled modules and duplicate priorities
+that could shadow the intended module. Installation explicitly enables the
+packaged module; it never removes a higher-priority override silently.
+Regression tests reproduced both former false-pass cases before these fixes.
+All 26 tests pass, including permissive-domain, failed-policy-query, disabled
+module and shadowed-module cases. The two policy grants are unchanged.

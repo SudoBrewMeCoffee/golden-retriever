@@ -141,7 +141,9 @@
 
         - name: Image includes persistent AIDE EFI metadata policy
           ansible.builtin.assert:
-            that: aide_efi_modules.stdout is regex('(?m)^400\s+aide_efi_metadata\s')
+            that:
+              - aide_efi_modules.stdout is regex('(?m)^400[ \t]+aide_efi_metadata[ \t]+(?:pp|cil)[ \t]*$')
+              - aide_efi_modules.stdout | regex_findall('(?m)^[0-9]+[ \t]+aide_efi_metadata[ \t]+[^\n]*') | length == 1
             fail_msg: "AIDE EFI metadata module is missing; scheduled checks would warn on EFI filesystems"
 
         - name: Read installed kernel packages

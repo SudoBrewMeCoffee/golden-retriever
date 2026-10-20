@@ -5,6 +5,16 @@
   changed_when: false
   failed_when: aide_enforcement_before.stdout | trim != 'Enforcing'
 
+- name: Read effective permissive domains before scheduled check
+  ansible.builtin.command: semanage permissive -l
+  register: aide_permissive_before
+  changed_when: false
+
+- name: Require enforcing AIDE domain before scheduled check
+  ansible.builtin.assert:
+    that: not (aide_permissive_before.stdout is regex('(?m)^\s*aide_t\s*$'))
+    fail_msg: "aide_t is individually permissive despite global enforcement"
+
 - name: Read previous scheduled AIDE invocation
   ansible.builtin.systemd_service:
     name: aidecheck.service
@@ -58,6 +68,11 @@
 - name: Read current SELinux enforcement after scheduled check
   ansible.builtin.command: getenforce
   register: aide_enforcement
+  changed_when: false
+
+- name: Read effective permissive domains after scheduled check
+  ansible.builtin.command: semanage permissive -l
+  register: aide_permissive_after
   changed_when: false
 
 - name: Hash baseline after scheduled check

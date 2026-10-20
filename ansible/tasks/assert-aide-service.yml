@@ -3,6 +3,10 @@
   ansible.builtin.assert:
     that:
       - aide_enforcement.stdout | trim == 'Enforcing'
+      - aide_permissive_before.rc == 0
+      - aide_permissive_after.rc == 0
+      - not (aide_permissive_before.stdout is regex('(?m)^\s*aide_t\s*$'))
+      - not (aide_permissive_after.stdout is regex('(?m)^\s*aide_t\s*$'))
       - aide_service_run.rc == 0
       - aidecheck.status.Result == 'success'
       - aidecheck.status.ExecMainStatus | int == 0

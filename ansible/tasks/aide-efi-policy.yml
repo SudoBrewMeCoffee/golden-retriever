@@ -5,6 +5,7 @@
     name:
       - checkpolicy
       - policycoreutils
+      - policycoreutils-python-utils
     state: present
 
 - name: Create local SELinux policy source directory
@@ -32,7 +33,7 @@
 - name: Compile and install AIDE EFI metadata policy when changed or missing
   when: >-
     aide_efi_source.changed or
-    not (aide_selinux_modules.stdout is regex('(?m)^400\s+aide_efi_metadata\s'))
+    not (aide_selinux_modules.stdout is regex('(?m)^400[ \t]+aide_efi_metadata[ \t]+(?:pp|cil)[ \t]*$'))
   block:
     - name: Compile AIDE EFI module
       ansible.builtin.command:
@@ -57,4 +58,8 @@
 
     - name: Install AIDE EFI module without changing SELinux enforcement
       ansible.builtin.command: semodule -X 400 -i /usr/local/share/selinux/aide_efi_metadata.pp
+      changed_when: true
+
+    - name: Enable the installed AIDE EFI module
+      ansible.builtin.command: semodule -e aide_efi_metadata
       changed_when: true
