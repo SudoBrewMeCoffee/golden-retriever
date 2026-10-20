@@ -117,8 +117,10 @@ jobs:
           version: "1.14.2"
       - name: Install Ansible and create a validation-only SSH key
         run: |
-          python -m pip install 'ansible-core>=2.19,<2.22'
+          python -m pip install 'ansible-core>=2.19,<2.22' pytest pyyaml
           ssh-keygen -q -t ed25519 -N '' -f "$RUNNER_TEMP/packer-validation"
+      - name: Test scheduled AIDE acceptance gate regressions
+        run: python -m pytest -q tests/test_aide_service_gate.py
       - name: Check Packer without building an image
         working-directory: packer
         run: |
