@@ -56,18 +56,8 @@
             that: aide_check.rc == 0
             fail_msg: "aide --check returned {{ aide_check.rc }}: {{ aide_check.stdout_lines[:40] }}"
 
-        - name: Read scheduled AIDE check unit state
-          ansible.builtin.systemd:
-            name: aidecheck.service
-          register: aidecheck
-
-        - name: Scheduled AIDE check is not failed and its timer is enabled (CIS RHEL9 6.1.2)
-          ansible.builtin.assert:
-            that:
-              - aidecheck.status.ActiveState != 'failed'
-              - aidecheck.status.Result == 'success'
-              - aidecheck.status.UnitFileState == 'enabled'
-            fail_msg: "aidecheck.service is {{ aidecheck.status.ActiveState }} ({{ aidecheck.status.Result }})"
+        - name: Verify a fresh scheduled AIDE run with its existing baseline
+          ansible.builtin.import_tasks: tasks/verify-aide-service.yml
 
         - name: Read installed kernel packages
           ansible.builtin.command:

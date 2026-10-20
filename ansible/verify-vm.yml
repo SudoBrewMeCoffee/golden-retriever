@@ -134,6 +134,18 @@
               - ansible_facts.services['aide-firstboot.service'].status == 'enabled'
             fail_msg: "aidecheck.timer or aide-firstboot.service is not enabled"
 
+        - name: Read installed AIDE EFI policy module
+          ansible.builtin.command: semodule -lfull
+          register: aide_efi_modules
+          changed_when: false
+
+        - name: Image includes persistent AIDE EFI metadata policy
+          ansible.builtin.assert:
+            that:
+              - aide_efi_modules.stdout is regex('(?m)^400[ \t]+aide_efi_metadata[ \t]+(?:pp|cil)[ \t]*$')
+              - aide_efi_modules.stdout | regex_findall('(?m)^[0-9]+[ \t]+aide_efi_metadata[ \t]+[^\n]*') | length == 1
+            fail_msg: "AIDE EFI metadata module is missing; scheduled checks would warn on EFI filesystems"
+
         - name: Read installed kernel packages
           ansible.builtin.command:
             argv: [rpm, -q, kernel, --qf, "%{VERSION}-%{RELEASE}.%{ARCH}\n"]

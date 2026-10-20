@@ -1,0 +1,13 @@
+module aide_efi_metadata 1.0;
+
+require {
+    type aide_t;
+    type dosfs_t;
+    type autofs_t;
+    class filesystem getattr;
+}
+
+# Only statfs metadata, not file writes, relabels or mount permissions.
+# Keep AIDE confined; /boot/efi uses dosfs_t and /efi uses autofs_t.
+allow aide_t dosfs_t:filesystem getattr;
+allow aide_t autofs_t:filesystem getattr;
