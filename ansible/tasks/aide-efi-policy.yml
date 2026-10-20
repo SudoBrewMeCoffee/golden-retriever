@@ -1,0 +1,60 @@
+---
+# Real Rocky hosts only: Molecule's containers cannot load host SELinux policy.
+- name: Install SELinux module build tools
+  ansible.builtin.package:
+    name:
+      - checkpolicy
+      - policycoreutils
+    state: present
+
+- name: Create local SELinux policy source directory
+  ansible.builtin.file:
+    path: /usr/local/share/selinux
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Install narrowly scoped AIDE EFI metadata policy source
+  ansible.builtin.copy:
+    src: aide_efi_metadata.te
+    dest: /usr/local/share/selinux/aide_efi_metadata.te
+    owner: root
+    group: root
+    mode: "0644"
+  register: aide_efi_source
+
+- name: Read installed SELinux modules
+  ansible.builtin.command: semodule -lfull
+  register: aide_selinux_modules
+  changed_when: false
+
+- name: Compile and install AIDE EFI metadata policy when changed or missing
+  when: >-
+    aide_efi_source.changed or
+    not (aide_selinux_modules.stdout is regex('(?m)^400\s+aide_efi_metadata\s'))
+  block:
+    - name: Compile AIDE EFI module
+      ansible.builtin.command:
+        argv:
+          - checkmodule
+          - -M
+          - -m
+          - -o
+          - /usr/local/share/selinux/aide_efi_metadata.mod
+          - /usr/local/share/selinux/aide_efi_metadata.te
+      changed_when: true
+
+    - name: Package AIDE EFI module
+      ansible.builtin.command:
+        argv:
+          - semodule_package
+          - -o
+          - /usr/local/share/selinux/aide_efi_metadata.pp
+          - -m
+          - /usr/local/share/selinux/aide_efi_metadata.mod
+      changed_when: true
+
+    - name: Install AIDE EFI module without changing SELinux enforcement
+      ansible.builtin.command: semodule -X 400 -i /usr/local/share/selinux/aide_efi_metadata.pp
+      changed_when: true

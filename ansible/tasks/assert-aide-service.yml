@@ -1,0 +1,25 @@
+---
+- name: Scheduled AIDE run succeeded without warnings under enforcing SELinux
+  ansible.builtin.assert:
+    that:
+      - aide_enforcement.stdout | trim == 'Enforcing'
+      - aide_service_run.rc == 0
+      - aidecheck.status.Result == 'success'
+      - aidecheck.status.ExecMainStatus | int == 0
+      - aidecheck.status.ConditionResult == 'yes'
+      - aidecheck.status.UnitFileState == 'enabled'
+      - aidecheck.status.ActiveState == 'inactive'
+      - aidecheck.status.InvocationID is match('^[0-9a-f]{32}$')
+      - aidecheck.status.InvocationID != aide_previous.status.InvocationID | default('')
+      - aide_service_log.rc == 0
+      - "'AIDE found NO differences between database and filesystem' in aide_service_log.stdout"
+      - >-
+        not ((aide_service_log.stdout ~ '\n' ~ aide_service_log.stderr)
+        is regex('(?i)warning|error|permission denied'))
+      - aide_db_after.stat.exists
+      - aide_db_before.stat.checksum == aide_db_after.stat.checksum
+    fail_msg: >-
+      Scheduled AIDE verification failed. SELinux={{ aide_enforcement.stdout }},
+      service={{ aidecheck.status.Result }}/{{ aidecheck.status.ExecMainStatus }}.
+      {{ aide_service_log.stdout }} {{ aide_service_log.stderr }}
+      Do not reset or update the baseline to make this check pass.
