@@ -1,5 +1,5 @@
 ---
-- name: CH-style base image — CIS RHEL 9 Level 1 + Wazuh-ready
+- name: Reference-style base image — CIS RHEL 9 Level 1 + Wazuh-ready
   hosts: all
   become: true
   vars:

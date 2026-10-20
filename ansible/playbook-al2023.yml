@@ -1,8 +1,8 @@
 ---
-# Amazon Linux 2023 counterpart of playbook.yml (CH also build amzn2023 AMIs).
+# Amazon Linux 2023 counterpart of playbook.yml (the reference pipeline also builds amzn2023 AMIs).
 # Level 1 is selected by tag: run with `--tags level1-server,rule_3.4.1.2,rule_3.4.2.1`
 # exactly as packer/al2023/al2023.pkr.hcl does (see vars/al2023-cis.yml).
-- name: CH-style base image - CIS Amazon Linux 2023 Level 1 + Wazuh-ready
+- name: Reference-style base image - CIS Amazon Linux 2023 Level 1 + Wazuh-ready
   hosts: all
   become: true
   vars:

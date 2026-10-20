@@ -1,6 +1,6 @@
 name: ch-mirror
 
-# Same shape as Companies House's *-terraform repos: checks on every PR, a
+# Same shape as the reference pipeline's public *-terraform repos: checks on every PR, a
 # Terraform plan posted for review, and nothing deployed without a human
 # approving the kronos-prod environment.
 # Security model for the self-hosted runner (Magnus, on the lab LAN, holds the Proxmox token):

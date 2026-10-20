@@ -45,7 +45,7 @@ One entry per change in `/root/.kronos-p2/changelog-<date>-ch-mirror.md` on pve,
 **Hard rules for agents:** never `terraform destroy`; never edit 301 by hand; never touch guests outside 9200-9299 / 300-309; never read, print or commit the Proxmox token; never use DHCP for ch-mirror guests.
 
 ## 6. Kubernetes
-Out of scope - Companies House run EC2/AMI. Not in the demo.
+Out of scope - the reference pipeline runs EC2/AMI. Not in the demo.
 
 ## 7. Running the tools on Magnus (lessons from the build)
 - Run long jobs (Packer, Terraform, Molecule) in a **held-open session**, never `nohup ... &` over SSH - macOS Local Network privacy cuts detached jobs off the LAN (what-broke #13).

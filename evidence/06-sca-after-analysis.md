@@ -23,7 +23,7 @@
 | 1.6.1.6 no unconfined services | the only unconfined processes are **the Wazuh agent we added** (wazuh-agentd, -execd, -logcollector, -modulesd, -syscheckd) | vendor issue; document or confine with a custom SELinux module |
 
 ### B. Image disk layout - not fixable by Ansible (22)
-1.1.2.x - 1.1.7.x: separate partitions + mount options for /tmp, /var, /var/tmp, /var/log, /var/log/audit, /home. The upstream cloud image is one partition. Fix = build from a kickstart / custom LVM layout (how CH's AMIs get theirs) - next iteration.
+1.1.2.x - 1.1.7.x: separate partitions + mount options for /tmp, /var, /var/tmp, /var/log, /var/log/audit, /home. The upstream cloud image is one partition. Fix = build from a kickstart / custom LVM layout (how the reference pipeline's AMIs get theirs) - next iteration.
 
 ### C. Benchmark version mismatch - the control is met, the older check can not see it (9)
 Wazuh scores against **CIS Rocky Linux 9 v1.0.0**; the role implements **CIS RHEL 9 v2.0**.

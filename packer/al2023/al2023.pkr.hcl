@@ -1,4 +1,4 @@
-# Amazon Linux 2023 counterpart of ../rocky9.pkr.hcl - mirrors companieshouse/amzn2023-base-ami.
+# Amazon Linux 2023 counterpart of ../rocky9.pkr.hcl - mirrors the reference pipeline's public amzn2023 base-AMI repo.
 # Separate directory so `packer build .` in packer/ (RHEL) never picks this up.
 # Source: AWS's official AL2023 KVM image (cdn.amazonlinux.com), template 9210.
 
@@ -95,7 +95,7 @@ build {
     ansible_env_vars = ["ANSIBLE_HOST_KEY_CHECKING=False"]
   }
 
-  # CH: ssh_clear_authorized_keys = true
+  # Reference pipeline: ssh_clear_authorized_keys = true
   # Packer uploads inline scripts to /tmp, which CIS 1.1.2.4 has just made noexec
   # (AL2023 mounts /tmp as tmpfs, so the role remounts it live) - what-broke #19.
   provisioner "shell" {

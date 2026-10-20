@@ -2,7 +2,7 @@
 default_language_version:
   python: python3.13
 
-# Same gates as companieshouse/*-terraform (fmt, docs, tflint, tfsec).
+# Same gates as the public-sector reference Terraform repos (fmt, docs, tflint, tfsec).
 # tfsec is now part of Trivy, so Trivy config scan replaces it.
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks

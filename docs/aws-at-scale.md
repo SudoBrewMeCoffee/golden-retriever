@@ -19,10 +19,10 @@ rollout have to be automatic, because there are too many instances to look at on
 (ansible-lockdown RHEL9-CIS 2.4.2), runs a real-VM verify gate (`ansible/verify-vm.yml`), clears SSH keys
 and machine-id, then publishes a semver-named template (`ch-rocky9-base-1.0.0`).
 
-**On AWS I would use** the Packer `amazon-ebs` builder - the same builder Companies House use in their
+**On AWS I would use** the Packer `amazon-ebs` builder - the same builder the public-sector reference pipeline uses in its
 public `rhel9-base-ami` repo. Reading that repo, the pattern is:
 
-| Concern | Companies House `rhel9-base-ami` (public) | Why it matters |
+| Concern | Reference pipeline `rhel9-base-ami` (public) | Why it matters |
 |---|---|---|
 | Source image | `source_ami_filter` with an owner ID and `most_recent = true` | Every build starts from the newest vendor image, so the rebuild picks up the vendor's latest patches. |
 | Versioning | `ami_name = "<prefix>-<version>"`, version kept in a `version` file; tags for `Name`, `BuildDate`, Packer version | AMI names must be unique, so a semver name doubles as an audit trail: any instance can be traced back to the build that made it. |
@@ -121,7 +121,7 @@ It is easy to blur two different things here, so to be precise:
     `AWS-ApplyAnsiblePlaybooks` document can run the same Ansible playbook from S3 or GitHub on a
     schedule, with a `Check` parameter and compliance severity reporting. That is the same
     `ansible/playbook.yml` and `group_vars/all/cis.yml` the lab uses.
-  - **Ansible directly** (from a pipeline with a dynamic `aws_ec2` inventory, which the CH repo's dev
+  - **Ansible directly** (from a pipeline with a dynamic `aws_ec2` inventory, which the reference repo's dev
     scripts already use) for ad hoc checks.
 
 A useful detail from the lab that carries straight over: the CIS role in ch-mirror implements
@@ -263,7 +263,7 @@ repo. Policy-as-code checks are in `policy/`.
 | `evidence/deviations.md` | Deviation register + Security Hub suppression rules | Accepted risk is owned, justified and visible |
 | Local Terraform state outside the repo | S3 backend, encrypted, versioned, `use_lockfile = true` | Shared, recoverable, locked state without DynamoDB |
 | Proxmox API token in GitHub secrets | GitHub OIDC -> IAM role (short-lived credentials) | No long-lived cloud keys anywhere |
-| pre-commit: fmt, validate, docs, tflint, Trivy | Same gates in pre-commit and CI | Same checks CH publish in their Terraform repos |
+| pre-commit: fmt, validate, docs, tflint, Trivy | Same gates in pre-commit and CI | Same checks the reference pipeline publishes in its Terraform repos |
 | `policy/` checks | OPA/conftest or Sentinel on `terraform show -json` | Security rules enforced on the plan before apply |
 | `kronos-prod` approval environment | Protected environment + OIDC-scoped apply role | Only the reviewed plan, only after approval |
 
@@ -280,7 +280,6 @@ Packer and Terraform:
 - HashiCorp Well-Architected: enforce CIS benchmarks - https://developer.hashicorp.com/well-architected-framework/secure-systems/compliance-and-governance/enforce-cis-benchmarks
 - tfsec is now part of Trivy - https://github.com/aquasecurity/tfsec
 - OPA with Terraform plans - https://www.openpolicyagent.org/docs/terraform
-- Companies House public base AMI repo - https://github.com/companieshouse/rhel9-base-ami
 
 AWS:
 - Inspector CIS scans for EC2 operating systems - https://docs.aws.amazon.com/inspector/latest/user/scanning-cis.html

@@ -1,6 +1,6 @@
-# ch-mirror — Companies House-style pipeline on KRONOS
+# ch-mirror — public-sector-style golden-image pipeline on KRONOS
 
-**Purpose:** a working, demonstrable copy of the Companies House (CH) public infrastructure
+**Purpose:** a working, demonstrable copy of a UK public-sector reference pipeline's published infrastructure
 pattern (Packer + Ansible CIS images, Molecule, Terraform, pre-commit gates) running on my
 KRONOS homelab (Proxmox), kept as a managed KRONOS service.
 
@@ -33,9 +33,9 @@ an approval: [`.github/workflows/ci.yml`](.github/workflows/ci.yml). Policy as c
 **What went wrong:** [`evidence/what-broke.md`](evidence/what-broke.md) - 15 real incidents, each with root cause,
 fix and the control added so it can't recur.
 
-**Mirrors what CH publish on github.com/companieshouse:**
+**Mirrors what the reference pipeline publishes in its open-source repos:**
 
-| CH (AWS) | ch-mirror (Proxmox) |
+| Reference pipeline (AWS) | ch-mirror (Proxmox) |
 |---|---|
 | `rhel9-base-ami`, `amzn2023-base-ami` — Packer + Ansible | `packer/rocky9.pkr.hcl` — Packer + Ansible, RHEL 9 rebuild |
 | Source AMI filter → provision → versioned AMI | Base template 9200 → clone → CIS → versioned template `ch-rocky9-base-<semver>` |
@@ -44,7 +44,7 @@ fix and the control added so it can't recur.
 | `*-terraform` repos, pre-commit: fmt, docs, tfsec, tflint | `terraform/` + `.pre-commit-config.yaml` (tfsec → Trivy) |
 | CI Packer container, Terraform runner | GitHub Actions workflow targeting a self-hosted runner on the Mac Studio, installed as a launchd daemon (`kronos/runner-daemon.sh`, what-broke #23) |
 
-**Not in scope:** Kubernetes. CH run EC2/AMI, not K8s. Park the K8s cluster if it's using RAM.
+**Not in scope:** Kubernetes. The reference pipeline runs EC2/AMI, not K8s. Park the K8s cluster if it's using RAM.
 
 ## Current state (16 Oct 2026)
 
@@ -120,9 +120,9 @@ qm clone 9200 300 --name ch-before --full  &&  qm start 300
 cd ansible && ansible-galaxy install -r requirements.yml -p roles && cd ..
 packer/build.sh 1.0.0      # reads the token from ~/.config/ch-mirror/pve-token; log -> evidence/03-packer-build-1.0.0.log
 ```
-Produces template **9201 `ch-rocky9-base-1.0.0`**. Bump `version` on every rebuild (CH style).
+Produces template **9201 `ch-rocky9-base-1.0.0`**. Bump `version` on every rebuild (reference-pipeline style).
 
-### Amazon Linux 2023 (CH also build `amzn2023-base-ami`)
+### Amazon Linux 2023 (the reference pipeline also builds `amzn2023-base-ami`)
 
 Same pattern, second image. Source is AWS's official AL2023 KVM image
 (`cdn.amazonlinux.com/al2023/os-images/latest/kvm/`, SHA256 checked against the published `SHA256SUMS`),

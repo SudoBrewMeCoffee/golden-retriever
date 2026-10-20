@@ -1,4 +1,4 @@
-# Mirrors companieshouse/rhel9-base-ami: clone a source image, provision with
+# Mirrors the reference pipeline's public rhel9 base-AMI repo: clone a source image, provision with
 # Ansible (CIS hardening), clear SSH keys, publish a semver-tagged template.
 
 packer {
@@ -106,7 +106,7 @@ build {
     ansible_env_vars = ["ANSIBLE_HOST_KEY_CHECKING=False"]
   }
 
-  # CH: ssh_clear_authorized_keys = true
+  # Reference pipeline: ssh_clear_authorized_keys = true
   provisioner "shell" {
     inline = [
       "sudo cloud-init clean --logs",

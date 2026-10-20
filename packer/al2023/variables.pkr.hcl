@@ -32,7 +32,7 @@ variable "name_prefix" {
 }
 variable "version" {
   type        = string
-  description = "Semantic version appended to the template name (CH convention)."
+  description = "Semantic version appended to the template name (reference-pipeline convention)."
 }
 variable "ssh_username" {
   type    = string
